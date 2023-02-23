@@ -96,14 +96,13 @@ final class BooleanWeight extends Weight {
         this.query = query;
         this.scoreMode = scoreMode;
         this.similarity = searcher.getSimilarity();
+        this.weightedClauses = new ArrayList<>();
+        long l = System.currentTimeMillis();
         for (BooleanClause c : query) {
-            SearchWorkers.submit(() -> {
-                Weight w  = searcher.createWeight(
-                        c.getQuery(), c.isScoring() ? scoreMode : ScoreMode.COMPLETE_NO_SCORES, boost);
-                return new WeightedBooleanClause(c, w);
-            });
+            Weight w  = searcher.createWeight(
+                    c.getQuery(), c.isScoring() ? scoreMode : ScoreMode.COMPLETE_NO_SCORES, boost);
+             weightedClauses.add(new WeightedBooleanClause(c, w));
         }
-        weightedClauses = SearchWorkers.awaitForTasksResult();
     }
 
     @Override

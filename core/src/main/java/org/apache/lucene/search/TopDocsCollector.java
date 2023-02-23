@@ -172,7 +172,8 @@ public abstract class TopDocsCollector<T extends ScoreDoc> implements Collector 
 
   protected synchronized T updateTop(){
     T t = pq.updateTop();
-    t.score = 0.0f;
+    if (t.score == Float.NEGATIVE_INFINITY)
+      t.score = Float.MIN_VALUE;
     return t;
   }
 }

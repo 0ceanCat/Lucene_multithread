@@ -34,7 +34,6 @@ public class LuceneSpeedTest {
         try {
             BufferedReader br = new BufferedReader(new FileReader(filename));
             String line = br.readLine();
-            long start = System.currentTimeMillis();
             int i = 0;
             while (true){
                 i++;
@@ -45,7 +44,7 @@ public class LuceneSpeedTest {
                     builder.add(new TermQuery(new Term("review_body", s)), BooleanClause.Occur.SHOULD)
                             .build();
                 }
-
+                long start = System.currentTimeMillis();
                 TopDocs docs = isearcher.search(builder.build(), 100);
                 ScoreDoc[] scoreDocs = docs.scoreDocs;
                 try{
@@ -59,11 +58,11 @@ public class LuceneSpeedTest {
                     System.out.println("error " + i);
                     return null;
                 }
-
+                System.out.println("i : " + (System.currentTimeMillis() - start));
                 //doclists.add(doclist);
                 line = br.readLine();
             };
-            System.out.println(System.currentTimeMillis() - start);
+
 
             /*FileWriter fw = new FileWriter("results.txt");
             for (List<String> doclist : doclists) {
@@ -132,7 +131,7 @@ public class LuceneSpeedTest {
         //d.readFile(file);
         //System.out.println(System.currentTimeMillis() - s);
 
-
+        System.exit(0);
         // 553 ms without threads
         // 278 ms with threads
     }
