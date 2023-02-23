@@ -772,6 +772,7 @@ public class IndexSearcher {
                                 TimeLimitingBulkScorer.TimeExceededException | IOException e) {
                     partialResult = true;
                 }
+                System.out.println();
             });
 
         }

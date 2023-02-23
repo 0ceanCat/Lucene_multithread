@@ -45,10 +45,12 @@ public class LuceneSpeedTest {
                             .build();
                 }
                 long start = System.currentTimeMillis();
-                TopDocs docs = isearcher.search(builder.build(), 100);
+                TopDocs docs = isearcher.search(builder.build(), 1000);
                 ScoreDoc[] scoreDocs = docs.scoreDocs;
+                ScoreDoc d = null;
                 try{
                     for (ScoreDoc scoreDoc : scoreDocs) {
+                        d = scoreDoc;
                         int doc = scoreDoc.doc;
                         Document doc1 = isearcher.doc(doc);
                     //    doclist.add(doc1.get("review_body"));
