@@ -740,10 +740,8 @@ public class IndexSearcher {
         // TODO: should we make this
         // threaded...? the Collector could be sync'd?
         // always use single thread:
-        Thread current = Thread.currentThread();
-        CountDownLatch d = new CountDownLatch(leaves.size());
         for (LeafReaderContext ctx : leaves) { // search each subreader
-            SearchWorkers.execute(current, () -> {
+            SearchWorkers.execute(() -> {
                 final LeafCollector leafCollector;
                 try {
                     leafCollector = collector.getLeafCollector(ctx);
@@ -752,7 +750,6 @@ public class IndexSearcher {
                                 CollectionTerminatedException | IOException e) {
                     // there is no doc of interest in this reader context
                     // continue with the following leaf
-                    d.countDown();
                     return;
                 }
                 try {
@@ -774,19 +771,12 @@ public class IndexSearcher {
                         @SuppressWarnings("unused")
                                 TimeLimitingBulkScorer.TimeExceededException | IOException e) {
                     partialResult = true;
-                }finally {
-                    d.countDown();
                 }
             });
 
         }
 
-        try {
-            d.await();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        //SearchWorkers.awaitForTasks(current);
+        SearchWorkers.awaitForTasks();
     }
 
     /**
