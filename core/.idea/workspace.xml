@@ -6,9 +6,10 @@
   <component name="ChangeListManager">
     <list default="true" id="4c0428de-0d8d-44fc-a1d2-f077eb328d8b" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/apache/lucene/mytest/LuceneSpeedTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/apache/lucene/mytest/LuceneSpeedTest.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/apache/lucene/search/BooleanWeight.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/apache/lucene/search/BooleanWeight.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/apache/lucene/search/IndexSearcher.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/apache/lucene/search/IndexSearcher.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/apache/lucene/search/SearchWorkers.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/apache/lucene/search/SearchWorkers.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/apache/lucene/search/TopDocsCollector.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/apache/lucene/search/TopDocsCollector.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -36,6 +37,14 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="GitSEFilterConfiguration">
+    <file-type-list>
+      <filtered-out-file-type name="LOCAL_BRANCH" />
+      <filtered-out-file-type name="REMOTE_BRANCH" />
+      <filtered-out-file-type name="TAG" />
+      <filtered-out-file-type name="COMMIT_BY_MESSAGE" />
+    </file-type-list>
   </component>
   <component name="ProjectId" id="2M8tBSlItCqnl3Dx1gW3V3H94yy" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
@@ -89,6 +98,19 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration default="true" type="ArquillianTestNG" factoryName="" nameIsGenerated="true">
+      <option name="arquillianRunConfiguration">
+        <value>
+          <option name="containerStateName" value="" />
+        </value>
+      </option>
+      <option name="TEST_OBJECT" value="CLASS" />
+      <properties />
+      <listeners />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <recent_temporary>
       <list>
         <item itemvalue="Application.LuceneSpeedTest (1)" />
@@ -133,7 +155,7 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/org/apache/lucene/mytest/LuceneSpeedTest.java</url>
-          <line>48</line>
+          <line>47</line>
           <option name="timeStamp" value="1" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
@@ -146,7 +168,42 @@
           <line>737</line>
           <option name="timeStamp" value="6" />
         </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/org/apache/lucene/search/BooleanWeight.java</url>
+          <line>94</line>
+          <option name="timeStamp" value="47" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/org/apache/lucene/search/IndexSearcher.java</url>
+          <line>755</line>
+          <option name="timeStamp" value="48" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/org/apache/lucene/search/IndexSearcher.java</url>
+          <line>746</line>
+          <option name="timeStamp" value="49" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/org/apache/lucene/search/TopScoreDocCollector.java</url>
+          <line>69</line>
+          <option name="timeStamp" value="50" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/org/apache/lucene/search/TopScoreDocCollector.java</url>
+          <line>79</line>
+          <option name="timeStamp" value="54" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/org/apache/lucene/search/TopScoreDocCollector.java</url>
+          <line>93</line>
+          <option name="timeStamp" value="55" />
+        </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/core$LuceneSpeedTest__1_.ic" NAME="LuceneSpeedTest (1) Coverage Results" MODIFIED="1677168528603" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false">
+      <FILTER>org.apache.lucene.mytest.*</FILTER>
+    </SUITE>
   </component>
 </project>
