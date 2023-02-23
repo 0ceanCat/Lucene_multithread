@@ -73,10 +73,10 @@ public abstract class TopFieldCollector extends TopDocsCollector<Entry> {
     }
 
     void countHit(int doc) throws IOException {
-      ++totalHits;
+      totalHits.incrementAndGet();
       hitsThresholdChecker.incrementHitCount();
 
-      if (minScoreAcc != null && (totalHits & minScoreAcc.modInterval) == 0) {
+      if (minScoreAcc != null && (totalHits.get() & minScoreAcc.modInterval) == 0) {
         updateGlobalMinCompetitiveScore(scorer);
       }
       if (scoreMode.isExhaustive() == false
@@ -206,7 +206,7 @@ public abstract class TopFieldCollector extends TopDocsCollector<Entry> {
             }
             collectCompetitiveHit(doc);
           } else {
-            collectAnyHit(doc, totalHits);
+            collectAnyHit(doc, totalHits.get());
           }
         }
       };
@@ -567,7 +567,7 @@ public abstract class TopFieldCollector extends TopDocsCollector<Entry> {
   final void updateBottom(int doc) {
     // bottom.score is already set to Float.NaN in add().
     bottom.doc = docBase + doc;
-    bottom = pq.updateTop();
+    bottom = updateTop();
   }
 
   /*
@@ -592,7 +592,7 @@ public abstract class TopFieldCollector extends TopDocsCollector<Entry> {
 
     // If this is a maxScoring tracking collector and there were no results,
     return new TopFieldDocs(
-        new TotalHits(totalHits, totalHitsRelation),
+        new TotalHits(totalHits.get(), totalHitsRelation),
         results,
         ((FieldValueHitQueue<Entry>) pq).getFields());
   }

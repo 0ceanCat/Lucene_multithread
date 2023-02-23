@@ -35,8 +35,16 @@ public abstract class TopScoreDocCollector extends TopDocsCollector<ScoreDoc> {
 
   /** Scorable leaf collector */
   public abstract static class ScorerLeafCollector implements LeafCollector {
-
+    protected ScorerLeafCollector(){ }
+    protected ScorerLeafCollector(int docBase, float minCompetitiveScore){
+      this.docBase = docBase;
+      this.minCompetitiveScore = minCompetitiveScore;
+    }
     protected Scorable scorer;
+    protected int docBase;
+    protected float minCompetitiveScore;
+    protected ScoreDoc pqTop;
+    protected TotalHits.Relation totalHitsRelation = TotalHits.Relation.EQUAL_TO;
 
     @Override
     public void setScorer(Scorable scorer) throws IOException {
@@ -54,39 +62,39 @@ public abstract class TopScoreDocCollector extends TopDocsCollector<ScoreDoc> {
     @Override
     public LeafCollector getLeafCollector(LeafReaderContext context) throws IOException {
       // reset the minimum competitive score
-      docBase = context.docBase;
-      minCompetitiveScore = 0f;
-
-      return new ScorerLeafCollector() {
+      //docBase = context.docBase;
+      //minCompetitiveScore = 0f;
+      return new ScorerLeafCollector(context.docBase, 0f) {
         @Override
         public void setScorer(Scorable scorer) throws IOException {
           super.setScorer(scorer);
           if (minScoreAcc == null) {
-            updateMinCompetitiveScore(scorer);
+            updateMinCompetitiveScore(this);
           } else {
-            updateGlobalMinCompetitiveScore(scorer);
+            updateGlobalMinCompetitiveScore(this);
           }
         }
 
         @Override
         public void collect(int doc) throws IOException {
+          pqTop = updateTop();
           float score = scorer.score();
 
           // This collector relies on the fact that scorers produce positive values:
           assert score >= 0; // NOTE: false for NaN
 
-          totalHits++;
+          totalHits.incrementAndGet();
           hitsThresholdChecker.incrementHitCount();
 
-          if (minScoreAcc != null && (totalHits & minScoreAcc.modInterval) == 0) {
-            updateGlobalMinCompetitiveScore(scorer);
+          if (minScoreAcc != null && (totalHits.get() & minScoreAcc.modInterval) == 0) {
+            updateGlobalMinCompetitiveScore(this);
           }
 
           if (score <= pqTop.score) {
             if (totalHitsRelation == TotalHits.Relation.EQUAL_TO) {
               // we just reached totalHitsThreshold, we can start setting the min
               // competitive score now
-              updateMinCompetitiveScore(scorer);
+              updateMinCompetitiveScore(this);
             }
             // Since docs are returned in-order (i.e., increasing doc Id), a document
             // with equal score to pqTop.score cannot compete since HitQueue favors
@@ -95,8 +103,7 @@ public abstract class TopScoreDocCollector extends TopDocsCollector<ScoreDoc> {
           }
           pqTop.doc = doc + docBase;
           pqTop.score = score;
-          pqTop = pq.updateTop();
-          updateMinCompetitiveScore(scorer);
+          updateMinCompetitiveScore(this);
         }
       };
     }
@@ -125,8 +132,8 @@ public abstract class TopScoreDocCollector extends TopDocsCollector<ScoreDoc> {
     @Override
     protected TopDocs newTopDocs(ScoreDoc[] results, int start) {
       return results == null
-          ? new TopDocs(new TotalHits(totalHits, totalHitsRelation), new ScoreDoc[0])
-          : new TopDocs(new TotalHits(totalHits, totalHitsRelation), results);
+          ? new TopDocs(new TotalHits(totalHits.get(), totalHitsRelation), new ScoreDoc[0])
+          : new TopDocs(new TotalHits(totalHits.get(), totalHitsRelation), results);
     }
 
     @Override
@@ -153,10 +160,10 @@ public abstract class TopScoreDocCollector extends TopDocsCollector<ScoreDoc> {
           // This collector relies on the fact that scorers produce positive values:
           assert score >= 0; // NOTE: false for NaN
 
-          totalHits++;
+          totalHits.incrementAndGet();
           hitsThresholdChecker.incrementHitCount();
 
-          if (minScoreAcc != null && (totalHits & minScoreAcc.modInterval) == 0) {
+          if (minScoreAcc != null && (totalHits.get() & minScoreAcc.modInterval) == 0) {
             updateGlobalMinCompetitiveScore(scorer);
           }
 
@@ -185,7 +192,7 @@ public abstract class TopScoreDocCollector extends TopDocsCollector<ScoreDoc> {
           collectedHits++;
           pqTop.doc = doc + docBase;
           pqTop.score = score;
-          pqTop = pq.updateTop();
+          pqTop = updateTop();
           updateMinCompetitiveScore(scorer);
         }
       };
@@ -306,7 +313,7 @@ public abstract class TopScoreDocCollector extends TopDocsCollector<ScoreDoc> {
       return EMPTY_TOPDOCS;
     }
 
-    return new TopDocs(new TotalHits(totalHits, totalHitsRelation), results);
+    return new TopDocs(new TotalHits(totalHits.get(), totalHitsRelation), results);
   }
 
   @Override
@@ -332,6 +339,24 @@ public abstract class TopScoreDocCollector extends TopDocsCollector<ScoreDoc> {
     }
   }
 
+  protected void updateGlobalMinCompetitiveScore(ScorerLeafCollector collector) throws IOException {
+    assert minScoreAcc != null;
+    DocAndScore maxMinScore = minScoreAcc.get();
+    if (maxMinScore != null) {
+      // since we tie-break on doc id and collect in doc id order we can require
+      // the next float if the global minimum score is set on a document id that is
+      // smaller than the ids in the current leaf
+      float score =
+              collector.docBase >= maxMinScore.docBase ? Math.nextUp(maxMinScore.score) : maxMinScore.score;
+      if (score > collector.minCompetitiveScore) {
+        assert hitsThresholdChecker.isThresholdReached();
+        collector.scorer.setMinCompetitiveScore(score);
+        collector.minCompetitiveScore = score;
+        collector.totalHitsRelation = TotalHits.Relation.GREATER_THAN_OR_EQUAL_TO;
+      }
+    }
+  }
+
   protected void updateMinCompetitiveScore(Scorable scorer) throws IOException {
     if (hitsThresholdChecker.isThresholdReached()
         && pqTop != null
@@ -348,6 +373,27 @@ public abstract class TopScoreDocCollector extends TopDocsCollector<ScoreDoc> {
           // id so that other leaves can require it if they are after
           // the current maximum
           minScoreAcc.accumulate(docBase, pqTop.score);
+        }
+      }
+    }
+  }
+
+  protected void updateMinCompetitiveScore(ScorerLeafCollector collector) throws IOException {
+    if (hitsThresholdChecker.isThresholdReached()
+            && collector.pqTop != null
+            && collector.pqTop.score != Float.NEGATIVE_INFINITY) { // -Infinity is the score of sentinels
+      // since we tie-break on doc id and collect in doc id order, we can require
+      // the next float
+      float localMinScore = Math.nextUp(pqTop.score);
+      if (localMinScore > collector.minCompetitiveScore) {
+        collector.scorer.setMinCompetitiveScore(localMinScore);
+        collector.totalHitsRelation = TotalHits.Relation.GREATER_THAN_OR_EQUAL_TO;
+        collector.minCompetitiveScore = localMinScore;
+        if (minScoreAcc != null) {
+          // we don't use the next float but we register the document
+          // id so that other leaves can require it if they are after
+          // the current maximum
+          minScoreAcc.accumulate(collector.docBase, collector.pqTop.score);
         }
       }
     }

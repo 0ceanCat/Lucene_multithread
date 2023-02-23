@@ -18,6 +18,8 @@ package org.apache.lucene.search;
 
 import org.apache.lucene.util.PriorityQueue;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 /**
  * A base class for all collectors that return a {@link TopDocs} output. This collector allows easy
  * extension by providing a single constructor which accepts a {@link PriorityQueue} as well as
@@ -47,7 +49,7 @@ public abstract class TopDocsCollector<T extends ScoreDoc> implements Collector 
   protected final PriorityQueue<T> pq;
 
   /** The total number of documents that the collector encountered. */
-  protected int totalHits;
+  protected AtomicInteger totalHits = new AtomicInteger();
 
   /** Whether {@link #totalHits} is exact or a lower bound. */
   protected TotalHits.Relation totalHitsRelation = TotalHits.Relation.EQUAL_TO;
@@ -74,12 +76,12 @@ public abstract class TopDocsCollector<T extends ScoreDoc> implements Collector 
   protected TopDocs newTopDocs(ScoreDoc[] results, int start) {
     return results == null
         ? EMPTY_TOPDOCS
-        : new TopDocs(new TotalHits(totalHits, totalHitsRelation), results);
+        : new TopDocs(new TotalHits(totalHits.get(), totalHitsRelation), results);
   }
 
   /** The total number of documents that matched this query. */
   public int getTotalHits() {
-    return totalHits;
+    return totalHits.get();
   }
 
   /** The number of valid PQ entries */
@@ -87,7 +89,7 @@ public abstract class TopDocsCollector<T extends ScoreDoc> implements Collector 
     // In case pq was populated with sentinel values, there might be less
     // results than pq.size(). Therefore return all results until either
     // pq.size() or totalHits.
-    return totalHits < pq.size() ? totalHits : pq.size();
+    return Math.min(totalHits.get(), pq.size());
   }
 
   /** Returns the top docs that were collected by this collector. */
@@ -166,5 +168,11 @@ public abstract class TopDocsCollector<T extends ScoreDoc> implements Collector 
     populateResults(results, howMany);
 
     return newTopDocs(results, start);
+  }
+
+  protected synchronized T updateTop(){
+    T t = pq.updateTop();
+    t.score = 0.0f;
+    return t;
   }
 }

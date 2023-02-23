@@ -52,7 +52,7 @@ final class MaxScoreAccumulator {
     return v2;
   }
 
-  void accumulate(int docBase, float score) {
+  synchronized void accumulate(int docBase, float score) {
     assert docBase >= 0 && score >= 0;
     long encode = (((long) Float.floatToIntBits(score)) << 32) | docBase;
     acc.accumulate(encode);
