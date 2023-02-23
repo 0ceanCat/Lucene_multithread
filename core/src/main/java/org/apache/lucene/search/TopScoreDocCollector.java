@@ -36,8 +36,9 @@ public abstract class TopScoreDocCollector extends TopDocsCollector<ScoreDoc> {
   /** Scorable leaf collector */
   public abstract static class ScorerLeafCollector implements LeafCollector {
     protected ScorerLeafCollector(){ }
-    protected ScorerLeafCollector(int docBase, float minCompetitiveScore){
+   protected ScorerLeafCollector(int docBase, float minCompetitiveScore, ScoreDoc pqTop){
       this.docBase = docBase;
+      this.pqTop = pqTop;
       this.minCompetitiveScore = minCompetitiveScore;
     }
     protected Scorable scorer;
@@ -64,7 +65,7 @@ public abstract class TopScoreDocCollector extends TopDocsCollector<ScoreDoc> {
       // reset the minimum competitive score
       //docBase = context.docBase;
       //minCompetitiveScore = 0f;
-      return new ScorerLeafCollector(context.docBase, 0f) {
+      return new ScorerLeafCollector(context.docBase, 0f, updateTop()) {
         @Override
         public void setScorer(Scorable scorer) throws IOException {
           super.setScorer(scorer);
@@ -77,7 +78,6 @@ public abstract class TopScoreDocCollector extends TopDocsCollector<ScoreDoc> {
 
         @Override
         public void collect(int doc) throws IOException {
-          pqTop = updateTop();
           float score = scorer.score();
 
           // This collector relies on the fact that scorers produce positive values:
@@ -103,6 +103,7 @@ public abstract class TopScoreDocCollector extends TopDocsCollector<ScoreDoc> {
           }
           pqTop.doc = doc + docBase;
           pqTop.score = score;
+          pqTop = pq.updateTop();
           updateMinCompetitiveScore(this);
         }
       };

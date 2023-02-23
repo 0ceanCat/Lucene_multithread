@@ -15,9 +15,11 @@ import org.apache.lucene.store.FSDirectory;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
 
@@ -30,7 +32,7 @@ public class LuceneSpeedTest {
         if (isearcher == null) {
             getIndexSearcher();
         }
-        //List<List<String>> doclists = new ArrayList<>();
+       List<List<String>> doclists = new ArrayList<>();
         try {
             BufferedReader br = new BufferedReader(new FileReader(filename));
             String line = br.readLine();
@@ -38,14 +40,14 @@ public class LuceneSpeedTest {
             while (true){
                 i++;
                 if (line == null) break;
-               // List<String> doclist = new ArrayList<>();
+                List<String> doclist = new ArrayList<>();
                 BooleanQuery.Builder builder = new BooleanQuery.Builder();
                 for (String s : line.split(" ")) {
                     builder.add(new TermQuery(new Term("review_body", s)), BooleanClause.Occur.SHOULD)
                             .build();
                 }
                 long start = System.currentTimeMillis();
-                TopDocs docs = isearcher.search(builder.build(), 1000);
+                TopDocs docs = isearcher.search(builder.build(), 10);
                 ScoreDoc[] scoreDocs = docs.scoreDocs;
                 ScoreDoc d = null;
                 try{
@@ -53,7 +55,7 @@ public class LuceneSpeedTest {
                         d = scoreDoc;
                         int doc = scoreDoc.doc;
                         Document doc1 = isearcher.doc(doc);
-                    //    doclist.add(doc1.get("review_body"));
+                        doclist.add(doc1.get("review_body"));
                     }
                 }catch (Exception e){
                     e.printStackTrace();
@@ -61,17 +63,17 @@ public class LuceneSpeedTest {
                     return null;
                 }
                 System.out.println("i : " + (System.currentTimeMillis() - start));
-                //doclists.add(doclist);
+                doclists.add(doclist);
                 line = br.readLine();
             };
 
 
-            /*FileWriter fw = new FileWriter("results.txt");
+            FileWriter fw = new FileWriter("results.txt");
             for (List<String> doclist : doclists) {
                 fw.write(doclist.toString());
                 fw.write("\n");
             }
-            fw.close();*/
+            fw.close();
 
         } catch (IOException e) {
             e.printStackTrace();
