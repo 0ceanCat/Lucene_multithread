@@ -26,56 +26,6 @@ public class LuceneSpeedTest {
     private IndexWriter indexWriter;
     private final static String INDEX_PATH = "src/main/resources/index_test";
 
-    public void createIndex() {
-        //1.指定索引文件的存储位置，索引具体的表现形式就是一组有规则的文件
-        try {
-            getIndexWriter();
-            indexWriter.deleteAll();
-
-            //4.获取索引源(原始数据)
-            List<Image> images = List.of(new Image(1, "12334", "niubi galaxy", 1.5),
-                    new Image(1, "5678", "gaga honghong niubi ", 1.5));
-            //5.遍历jobInfoList，每次遍历创建一个Document对象
-            for (Image image : images) {
-                addNewDocument(image, false);
-            }
-            indexWriter.commit();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void addNewDocument(Image image, boolean flush) {
-        getIndexWriter();
-        Document document = new Document();
-        //创建Field对象
-        document.add(new StoredField("id", image.getId()));
-        //切分词、索引、存储
-        document.add(new TextField("caption", image.getCaption(), Field.Store.YES));
-        //将文档追加到索引库中
-        try {
-            indexWriter.addDocument(document);
-            if (flush) indexWriter.commit();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void updateDocument(Image image) {
-        deleteDocument(image);
-        addNewDocument(image, true);
-    }
-
-    public void deleteDocument(Image image) {
-        getIndexWriter();
-        try {
-            indexWriter.deleteDocuments(new Term("id", String.valueOf(image.getId())));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-
     public List<Document> search(String filename) {
         if (isearcher == null) {
             getIndexSearcher();
