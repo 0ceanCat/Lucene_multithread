@@ -24,7 +24,7 @@ import java.util.concurrent.Executors;
 public class LuceneSpeedTest {
     private IndexSearcher isearcher;
     private IndexWriter indexWriter;
-    private final static String INDEX_PATH = "src/main/resources/index_test";
+    private final static String INDEX_PATH = "D:\\Universidade\\tese\\lucene_test_dataset\\indexes";
 
     public List<Document> search(String filename) {
         if (isearcher == null) {
