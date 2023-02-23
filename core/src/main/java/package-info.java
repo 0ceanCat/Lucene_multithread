@@ -16,4 +16,3 @@
  */
 
 /** Top-level package. */
-package org.apache.lucene;
