@@ -7,12 +7,11 @@ import java.util.concurrent.*;
 import java.util.function.BiFunction;
 
 public class SearchWorkers {
-    final private static ThreadPoolExecutor pool = (ThreadPoolExecutor) Executors.newFixedThreadPool(2);
-        /*new ThreadPoolExecutor(6,
-            16,
-            60L,
-            TimeUnit.SECONDS,
-            new LinkedBlockingQueue<Runnable>());*/
+    final private static ThreadPoolExecutor pool = new ThreadPoolExecutor(6,
+                                            16,
+                                            60L,
+                                            TimeUnit.SECONDS,
+                                            new LinkedBlockingQueue<Runnable>());
 
     final private static Map<Object, Integer> taskCounter = new ConcurrentHashMap<>();
 

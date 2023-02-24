@@ -5,16 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="4c0428de-0d8d-44fc-a1d2-f077eb328d8b" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/Test.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/results.txt" beforeDir="false" afterPath="$PROJECT_DIR$/results.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/apache/lucene/mytest/LuceneSpeedTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/apache/lucene/mytest/LuceneSpeedTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/apache/lucene/search/HitQueue.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/apache/lucene/search/HitQueue.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/apache/lucene/search/IndexSearcher.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/apache/lucene/search/IndexSearcher.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/apache/lucene/search/MaxScoreAccumulator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/apache/lucene/search/MaxScoreAccumulator.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/apache/lucene/search/SearchWorkers.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/apache/lucene/search/SearchWorkers.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/apache/lucene/search/TopDocsCollector.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/apache/lucene/search/TopDocsCollector.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/apache/lucene/search/TopFieldCollector.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/apache/lucene/search/TopFieldCollector.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/apache/lucene/search/TopScoreDocCollector.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/apache/lucene/search/TopScoreDocCollector.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />

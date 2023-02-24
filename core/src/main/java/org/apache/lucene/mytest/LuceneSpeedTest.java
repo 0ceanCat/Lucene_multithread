@@ -32,7 +32,7 @@ public class LuceneSpeedTest {
         if (isearcher == null) {
             getIndexSearcher();
         }
-       List<List<String>> doclists = new ArrayList<>();
+       //List<List<String>> doclists = new ArrayList<>();
         long start = System.currentTimeMillis();
         try {
             BufferedReader br = new BufferedReader(new FileReader(filename));
@@ -41,13 +41,13 @@ public class LuceneSpeedTest {
             while (true){
                 i++;
                 if (line == null) break;
-                List<String> doclist = new ArrayList<>();
+                //List<String> doclist = new ArrayList<>();
                 BooleanQuery.Builder builder = new BooleanQuery.Builder();
                 for (String s : line.split(" ")) {
                     builder.add(new TermQuery(new Term("review_body", s)), BooleanClause.Occur.SHOULD)
                             .build();
                 }
-                TopDocs docs = isearcher.search(builder.build(), 10);
+                TopDocs docs = isearcher.search(builder.build(), 1000);
                 ScoreDoc[] scoreDocs = docs.scoreDocs;
                 ScoreDoc d = null;
                 try{
@@ -55,24 +55,24 @@ public class LuceneSpeedTest {
                         d = scoreDoc;
                         int doc = scoreDoc.doc;
                         Document doc1 = isearcher.doc(doc);
-                        doclist.add(doc1.get("review_body"));
+                        //doclist.add(doc1.get("review_body"));
                     }
                 }catch (Exception e){
                     e.printStackTrace();
                     System.out.println("error " + i);
                     return null;
                 }
-                doclists.add(doclist);
+                //doclists.add(doclist);
                 line = br.readLine();
             };
 
 
-            FileWriter fw = new FileWriter("results.txt");
+           /* FileWriter fw = new FileWriter("results.txt");
             for (List<String> doclist : doclists) {
                 fw.write(doclist.toString());
                 fw.write("\n");
             }
-            fw.close();
+            fw.close();*/
             System.out.println(System.currentTimeMillis() - start);
 
         } catch (IOException e) {
@@ -87,7 +87,7 @@ public class LuceneSpeedTest {
                 Path path = Paths.get(INDEX_PATH);
                 Directory directory = FSDirectory.open(path);
                 DirectoryReader ireader = DirectoryReader.open(directory);
-                isearcher = new IndexSearcher(ireader, Executors.newFixedThreadPool(1));
+                isearcher = new IndexSearcher(ireader, Executors.newFixedThreadPool(2));
             } catch (IOException e) {
                 e.printStackTrace();
             }

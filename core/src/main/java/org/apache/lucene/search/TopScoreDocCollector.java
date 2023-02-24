@@ -71,7 +71,7 @@ public abstract class TopScoreDocCollector extends TopDocsCollector<ScoreDoc> {
 
         SimpleTopScoreDocCollector(
                 int numHits, HitsThresholdChecker hitsThresholdChecker, MaxScoreAccumulator minScoreAcc) {
-            super(numHits, hitsThresholdChecker, minScoreAcc, false);
+            super(numHits, hitsThresholdChecker, minScoreAcc, true);
         }
 
         @Override
