@@ -7,7 +7,7 @@ import java.util.concurrent.*;
 import java.util.function.BiFunction;
 
 public class SearchWorkers {
-    final private static ThreadPoolExecutor pool = (ThreadPoolExecutor) Executors.newFixedThreadPool(1);
+    final private static ThreadPoolExecutor pool = (ThreadPoolExecutor) Executors.newFixedThreadPool(2);
         /*new ThreadPoolExecutor(6,
             16,
             60L,

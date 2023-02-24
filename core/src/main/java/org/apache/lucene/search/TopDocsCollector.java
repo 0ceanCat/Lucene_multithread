@@ -19,6 +19,7 @@ package org.apache.lucene.search;
 import org.apache.lucene.util.PriorityQueue;
 
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Supplier;
 
 /**
  * A base class for all collectors that return a {@link TopDocs} output. This collector allows easy
@@ -58,8 +59,16 @@ public abstract class TopDocsCollector<T extends ScoreDoc> implements Collector 
      */
     protected TotalHits.Relation totalHitsRelation = TotalHits.Relation.EQUAL_TO;
 
+    protected final int numHits;
+
     protected TopDocsCollector(PriorityQueue<T> pq) {
         this.pq = pq;
+        this.numHits = pq.size();
+    }
+
+    protected TopDocsCollector(int numHits, PriorityQueue<T> pq) {
+        this.pq = pq;
+        this.numHits = numHits;
     }
 
     /**
@@ -180,10 +189,25 @@ public abstract class TopDocsCollector<T extends ScoreDoc> implements Collector 
         return newTopDocs(results, start);
     }
 
-    protected synchronized T updateTop() {
-        T t = pq.updateTop();
-        if (t.score == Float.NEGATIVE_INFINITY)
-            t.score = Float.MIN_VALUE;
-        return t;
+    protected T updateTop(Supplier<T> defaultV) {
+        if (numHits > pq.size()) {
+            synchronized (pq) {
+                if (numHits > pq.size()) {
+                    return defaultV.get();
+                }
+            }
+        }
+        return pq.updateTop();
+    }
+
+    protected void add(T t) {
+        if (numHits > pq.size()) {
+            synchronized (pq) {
+                if (numHits > pq.size()) {
+                    pq.add(t);
+                    //hitsCounter = pq.size();
+                }
+            }
+        }
     }
 }

@@ -33,6 +33,7 @@ public class LuceneSpeedTest {
             getIndexSearcher();
         }
        List<List<String>> doclists = new ArrayList<>();
+        long start = System.currentTimeMillis();
         try {
             BufferedReader br = new BufferedReader(new FileReader(filename));
             String line = br.readLine();
@@ -46,7 +47,6 @@ public class LuceneSpeedTest {
                     builder.add(new TermQuery(new Term("review_body", s)), BooleanClause.Occur.SHOULD)
                             .build();
                 }
-                long start = System.currentTimeMillis();
                 TopDocs docs = isearcher.search(builder.build(), 10);
                 ScoreDoc[] scoreDocs = docs.scoreDocs;
                 ScoreDoc d = null;
@@ -62,7 +62,6 @@ public class LuceneSpeedTest {
                     System.out.println("error " + i);
                     return null;
                 }
-                System.out.println("i : " + (System.currentTimeMillis() - start));
                 doclists.add(doclist);
                 line = br.readLine();
             };
@@ -74,6 +73,7 @@ public class LuceneSpeedTest {
                 fw.write("\n");
             }
             fw.close();
+            System.out.println(System.currentTimeMillis() - start);
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -87,7 +87,7 @@ public class LuceneSpeedTest {
                 Path path = Paths.get(INDEX_PATH);
                 Directory directory = FSDirectory.open(path);
                 DirectoryReader ireader = DirectoryReader.open(directory);
-                isearcher = new IndexSearcher(ireader, Executors.newFixedThreadPool(2));
+                isearcher = new IndexSearcher(ireader, Executors.newFixedThreadPool(1));
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -128,7 +128,7 @@ public class LuceneSpeedTest {
     public static void main(String[] args) throws IOException {
         long s = System.currentTimeMillis();
         //String file = "D:\\Universidade\\tese\\lucene_test_dataset\\amazon_reviews_us_Digital_Music_Purchase_v1_00.tsv";
-        String file = "D:\\Universidade\\tese\\lucene_test_dataset\\queries.txt";
+        String file = "D:\\Universidade\\tese\\lucene_test_dataset\\queries2.txt";
         LuceneSpeedTest d = new LuceneSpeedTest();
         d.search(file);
         System.out.println("done");

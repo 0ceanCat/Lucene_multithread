@@ -58,7 +58,7 @@ final class MaxScoreAccumulator {
     acc.accumulate(encode);
   }
 
-  DocAndScore get() {
+  synchronized DocAndScore get() {
     long value = acc.get();
     if (value == Long.MIN_VALUE) {
       return null;

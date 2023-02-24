@@ -567,7 +567,7 @@ public abstract class TopFieldCollector extends TopDocsCollector<Entry> {
   final void updateBottom(int doc) {
     // bottom.score is already set to Float.NaN in add().
     bottom.doc = docBase + doc;
-    bottom = updateTop();
+    bottom = pq.updateTop();
   }
 
   /*

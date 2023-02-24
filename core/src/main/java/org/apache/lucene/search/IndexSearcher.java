@@ -27,6 +27,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.*;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
@@ -43,6 +44,7 @@ import org.apache.lucene.search.similarities.BM25Similarity;
 import org.apache.lucene.search.similarities.Similarity;
 import org.apache.lucene.store.NIOFSDirectory;
 import org.apache.lucene.util.Bits;
+import org.apache.lucene.util.PriorityQueue;
 import org.apache.lucene.util.ThreadInterruptedException;
 import org.apache.lucene.util.automaton.ByteRunAutomaton;
 
@@ -492,6 +494,7 @@ public class IndexSearcher {
                     @Override
                     public TopDocs reduce(Collection<TopScoreDocCollector> collectors) throws IOException {
                         final TopDocs[] topDocs = new TopDocs[collectors.size()];
+                        List<TopScoreDocCollector> l = (List<TopScoreDocCollector>) collectors;
                         int i = 0;
                         for (TopScoreDocCollector collector : collectors) {
                             topDocs[i++] = collector.topDocs();
@@ -758,9 +761,7 @@ public class IndexSearcher {
                         if (queryTimeout != null && queryTimeout.isTimeoutEnabled()) {
                             scorer = new TimeLimitingBulkScorer(scorer, queryTimeout);
                         }
-
                         scorer.score(leafCollector, ctx.reader().getLiveDocs());
-
                     }
                 } catch (
                         @SuppressWarnings("unused")
@@ -772,7 +773,6 @@ public class IndexSearcher {
                                 TimeLimitingBulkScorer.TimeExceededException | IOException e) {
                     partialResult = true;
                 }
-                System.out.println();
             });
 
         }
