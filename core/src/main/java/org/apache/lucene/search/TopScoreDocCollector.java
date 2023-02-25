@@ -18,11 +18,13 @@ package org.apache.lucene.search;
 
 import java.io.IOException;
 import java.util.Collection;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Supplier;
 
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.search.MaxScoreAccumulator.DocAndScore;
+import org.apache.lucene.util.PriorityQueue;
 
 /**
  * A {@link Collector} implementation that collects the top-scoring hits, returning them as a {@link
@@ -52,12 +54,15 @@ public abstract class TopScoreDocCollector extends TopDocsCollector<ScoreDoc> {
             this.minCompetitiveScore = minCompetitiveScore;
             this.totalHitsRelation = totalHitsRelation;
             this.initDoc = true;
+            this.returned = false;
         }
 
         protected Scorable scorer;
         protected int docBase;
+        protected boolean returned;
         protected float minCompetitiveScore;
         protected ScoreDoc pqTop;
+        protected ScoreDoc addedback;
         protected boolean initDoc;
         protected TotalHits.Relation totalHitsRelation;
 
@@ -72,6 +77,130 @@ public abstract class TopScoreDocCollector extends TopDocsCollector<ScoreDoc> {
         SimpleTopScoreDocCollector(
                 int numHits, HitsThresholdChecker hitsThresholdChecker, MaxScoreAccumulator minScoreAcc) {
             super(numHits, hitsThresholdChecker, minScoreAcc, true);
+            updated = new HitQueue(numHits,false);
+            toBeUpdated = pq;
+        }
+
+        PriorityQueue<ScoreDoc> updated;
+        PriorityQueue<ScoreDoc> toBeUpdated;
+
+        final ReentrantLock toBeUpdatedLock = new ReentrantLock();
+        final ReentrantLock updatedLock = new ReentrantLock();
+
+        protected ScoreDoc updateTop(Supplier<ScoreDoc> defaultV) {
+            try {
+                toBeUpdatedLock.lock();
+                if (toBeUpdated.size() == 0){
+                    swap();
+                }
+                return toBeUpdated.pop();
+            }finally {
+                toBeUpdatedLock.unlock();
+            }
+
+        }
+        protected void add(ScoreDoc t) {
+            try{
+                updatedLock.lock();
+                if (updated.size() >= numHits){
+                    swap();
+                }
+                updated.add(t);
+            }finally {
+                updatedLock.unlock();
+            }
+        }
+
+        protected void addback(ScoreDoc t) {
+            try{
+                toBeUpdatedLock.lock();
+                if (toBeUpdated.size() >= numHits){
+                    return;
+                }
+                toBeUpdated.add(t);
+            }finally {
+                toBeUpdatedLock.unlock();
+            }
+        }
+
+        synchronized void swap(){
+            PriorityQueue<ScoreDoc> temp = toBeUpdated;
+            toBeUpdated = updated;
+            updated = temp;
+        }
+
+        protected int topDocsSize() {
+            // In case pq was populated with sentinel values, there might be less
+            // results than pq.size(). Therefore return all results until either
+            // pq.size() or totalHits.
+            return Math.min(totalHits.get(), updated.size() + toBeUpdated.size());
+        }
+
+        public TopDocs topDocs(int start, int howMany) {
+
+            // In case pq was populated with sentinel values, there might be less
+            // results than pq.size(). Therefore return all results until either
+            // pq.size() or totalHits.
+
+            int size = topDocsSize();
+
+            if (howMany < 0) {
+                throw new IllegalArgumentException(
+                        "Number of hits requested must be greater than 0 but value was " + howMany);
+            }
+
+            if (start < 0) {
+                throw new IllegalArgumentException(
+                        "Expected value of starting position is between 0 and " + size + ", got " + start);
+            }
+
+            if (start >= size || howMany == 0) {
+                return newTopDocs(null, start);
+            }
+
+            // We know that start < pqsize, so just fix howMany.
+            howMany = Math.min(size - start, howMany);
+            ScoreDoc[] results = new ScoreDoc[howMany];
+
+            // pq's pop() returns the 'least' element in the queue, therefore need
+            // to discard the first ones, until we reach the requested range.
+            // Note that this loop will usually not be executed, since the common usage
+            // should be that the caller asks for the last howMany results. However it's
+            // needed here for completeness.
+            for (int i = updated.size() + toBeUpdated.size() - start - howMany; i > 0; i--) {
+                if (updated.size() > 0 && toBeUpdated.size() > 0){
+                    if (updated.top().compareTo(toBeUpdated.top()) < 0){
+                        updated.pop();
+                    }else {
+                        toBeUpdated.pop();
+                    }
+                } else if (updated.size() > 0) {
+                    updated.pop();
+                }else {
+                    toBeUpdated.pop();
+                }
+            }
+
+            // Get the requested results from pq.
+            populateResults(results, howMany);
+
+            return newTopDocs(results, start);
+        }
+
+        protected void populateResults(ScoreDoc[] results, int howMany) {
+            for (int i = howMany - 1; i >= 0; i--) {
+                if (updated.size() > 0 && toBeUpdated.size() > 0){
+                    if (updated.top().compareTo(toBeUpdated.top()) < 0){
+                        results[i] = updated.pop();
+                    }else {
+                        results[i] =toBeUpdated.pop();
+                    }
+                } else if (updated.size() > 0) {
+                    results[i] = updated.pop();
+                }else {
+                    results[i] =toBeUpdated.pop();
+                }
+            }
         }
 
         @Override
@@ -79,7 +208,7 @@ public abstract class TopScoreDocCollector extends TopDocsCollector<ScoreDoc> {
             // reset the minimum competitive score
             //docBase = context.docBase;
             //minCompetitiveScore = 0f;
-            return new ScorerLeafCollector(context.docBase, 0f, updateTop(supplier), totalHitsRelation) {
+            return new ScorerLeafCollector(context.docBase, 0f, null, totalHitsRelation) {
                 @Override
                 public void setScorer(Scorable scorer) throws IOException {
                     super.setScorer(scorer);
@@ -92,6 +221,7 @@ public abstract class TopScoreDocCollector extends TopDocsCollector<ScoreDoc> {
 
                 @Override
                 public void collect(int doc) throws IOException {
+                    pqTop = updateTop(supplier);
                     float score = scorer.score();
 
                     // This collector relies on the fact that scorers produce positive values:
@@ -113,12 +243,17 @@ public abstract class TopScoreDocCollector extends TopDocsCollector<ScoreDoc> {
                         // Since docs are returned in-order (i.e., increasing doc Id), a document
                         // with equal score to pqTop.score cannot compete since HitQueue favors
                         // documents with lower doc Ids. Therefore reject those docs too.
+                        addback(pqTop);
                         return;
                     }
+                    /*if (addedback != pqTop){
+                        pqTop = updateTop(supplier);
+                    }*/
+
                     pqTop.doc = doc + this.docBase;
                     pqTop.score = score;
                     add(pqTop);
-                    pqTop = updateTop(supplier);
+                    returned = false;
                     updateMinCompetitiveScore(this);
                 }
             };

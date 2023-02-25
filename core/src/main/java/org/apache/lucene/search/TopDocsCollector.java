@@ -189,26 +189,4 @@ public abstract class TopDocsCollector<T extends ScoreDoc> implements Collector 
         return newTopDocs(results, start);
     }
 
-    protected synchronized T updateTop(Supplier<T> defaultV) {
-       /* if (numHits > pq.size()) {
-            synchronized (pq) {
-                if (numHits > pq.size()) {
-                    return defaultV.get();
-                }
-            }
-        }*/
-        return pq.pop();
-    }
-
-    protected synchronized void add(T t) {
-       /* if (numHits > pq.size()) {
-            synchronized (pq) {
-                if (numHits > pq.size()) {
-                    pq.add(t);
-                    //hitsCounter = pq.size();
-                }
-            }
-        }*/
-        pq.add(t);
-    }
 }

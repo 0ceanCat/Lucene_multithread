@@ -17,7 +17,7 @@
 package org.apache.lucene.search;
 
 /** Holds one hit in {@link TopDocs}. */
-public class ScoreDoc {
+public class ScoreDoc implements Comparable<ScoreDoc>{
 
   /** The score of this document for the query. */
   public float score;
@@ -48,5 +48,14 @@ public class ScoreDoc {
   @Override
   public String toString() {
     return "doc=" + doc + " score=" + score + " shardIndex=" + shardIndex;
+  }
+
+  @Override
+  public int compareTo(ScoreDoc o) {
+    if (score == o.score) {
+      return Integer.compare(doc, o.doc);
+    } else {
+      return Float.compare(score, o.score);
+    }
   }
 }
