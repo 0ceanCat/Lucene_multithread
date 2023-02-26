@@ -93,11 +93,14 @@ public abstract class TopScoreDocCollector extends TopDocsCollector<ScoreDoc> {
                 if (toBeUpdated.size() == 0){
                     swap();
                 }
-                return toBeUpdated.pop();
+
+                if (updated.size() == 0 || updated.top().compareTo(toBeUpdated.top()) >= 0){
+                    return toBeUpdated.pop();
+                }
             }finally {
                 toBeUpdatedLock.unlock();
             }
-
+            return popUpdated();
         }
         protected void add(ScoreDoc t) {
             try{
@@ -111,12 +114,18 @@ public abstract class TopScoreDocCollector extends TopDocsCollector<ScoreDoc> {
             }
         }
 
+        protected ScoreDoc popUpdated() {
+            try{
+                updatedLock.lock();
+                return updated.pop();
+            }finally {
+                updatedLock.unlock();
+            }
+        }
+
         protected void addback(ScoreDoc t) {
             try{
                 toBeUpdatedLock.lock();
-                if (toBeUpdated.size() >= numHits){
-                    return;
-                }
                 toBeUpdated.add(t);
             }finally {
                 toBeUpdatedLock.unlock();
@@ -124,6 +133,7 @@ public abstract class TopScoreDocCollector extends TopDocsCollector<ScoreDoc> {
         }
 
         synchronized void swap(){
+            if (toBeUpdated.size() > updated.size()) return;
             PriorityQueue<ScoreDoc> temp = toBeUpdated;
             toBeUpdated = updated;
             updated = temp;
@@ -246,10 +256,6 @@ public abstract class TopScoreDocCollector extends TopDocsCollector<ScoreDoc> {
                         addback(pqTop);
                         return;
                     }
-                    /*if (addedback != pqTop){
-                        pqTop = updateTop(supplier);
-                    }*/
-
                     pqTop.doc = doc + this.docBase;
                     pqTop.score = score;
                     add(pqTop);

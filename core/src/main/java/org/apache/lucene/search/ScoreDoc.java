@@ -16,6 +16,8 @@
  */
 package org.apache.lucene.search;
 
+import java.util.TreeSet;
+
 /** Holds one hit in {@link TopDocs}. */
 public class ScoreDoc implements Comparable<ScoreDoc>{
 
@@ -52,10 +54,12 @@ public class ScoreDoc implements Comparable<ScoreDoc>{
 
   @Override
   public int compareTo(ScoreDoc o) {
+    if (o == null) return -1;
     if (score == o.score) {
       return Integer.compare(doc, o.doc);
     } else {
-      return Float.compare(score, o.score);
+      return -Float.compare(score, o.score);
     }
   }
+
 }

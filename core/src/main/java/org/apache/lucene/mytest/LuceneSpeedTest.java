@@ -128,7 +128,7 @@ public class LuceneSpeedTest {
     public static void main(String[] args) throws IOException {
         long s = System.currentTimeMillis();
         //String file = "D:\\Universidade\\tese\\lucene_test_dataset\\amazon_reviews_us_Digital_Music_Purchase_v1_00.tsv";
-        String file = "D:\\Universidade\\tese\\lucene_test_dataset\\queries2.txt";
+        String file = "D:\\Universidade\\tese\\lucene_test_dataset\\queries.txt";
         LuceneSpeedTest d = new LuceneSpeedTest();
         d.search(file);
         System.out.println("done");
