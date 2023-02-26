@@ -233,7 +233,7 @@ public abstract class TopScoreDocCollector extends TopDocsCollector<ScoreDoc> {
                 public void collect(int doc) throws IOException {
                     pqTop = updateTop(supplier);
                     float score = scorer.score();
-
+                    //System.out.println(doc);
                     // This collector relies on the fact that scorers produce positive values:
                     assert score >= 0; // NOTE: false for NaN
 
