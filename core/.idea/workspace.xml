@@ -5,7 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="4c0428de-0d8d-44fc-a1d2-f077eb328d8b" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/apache/lucene/search/TopDocsCollector.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/apache/lucene/search/TopDocsCollector.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/results.txt" beforeDir="false" afterPath="$PROJECT_DIR$/results.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/apache/lucene/mytest/LuceneSpeedTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/apache/lucene/mytest/LuceneSpeedTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/apache/lucene/search/ScoreDoc.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/apache/lucene/search/ScoreDoc.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/apache/lucene/search/SearchWorkers.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/apache/lucene/search/SearchWorkers.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/apache/lucene/search/TopScoreDocCollector.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/apache/lucene/search/TopScoreDocCollector.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -43,22 +47,20 @@
       <filtered-out-file-type name="COMMIT_BY_MESSAGE" />
     </file-type-list>
   </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
   <component name="ProjectId" id="2M8tBSlItCqnl3Dx1gW3V3H94yy" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">
-    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
-    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
-    <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="aspect.path.notification.shown" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/src/main" />
-    <property name="project.structure.last.edited" value="Project" />
-    <property name="project.structure.proportion" value="0.15" />
-    <property name="project.structure.side.proportion" value="0.0" />
-  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;
+  }
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="D:\Universidade\tese\Lucene_multithread\core\src\main" />
@@ -70,6 +72,17 @@
     </key>
   </component>
   <component name="RunManager" selected="Application.LuceneSpeedTest (1)">
+    <configuration default="true" type="ArquillianJUnit" factoryName="" nameIsGenerated="true">
+      <option name="arquillianRunConfiguration">
+        <value>
+          <option name="containerStateName" value="" />
+        </value>
+      </option>
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="LuceneSpeedTest (1)" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="org.apache.lucene.mytest.LuceneSpeedTest" />
       <module name="core" />
@@ -96,6 +109,19 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="ScoreDoc" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="org.apache.lucene.search.ScoreDoc" />
+      <module name="core" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="org.apache.lucene.search.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="Test" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="Test" />
       <module name="core" />
@@ -103,20 +129,16 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration default="true" type="ArquillianJUnit" factoryName="" nameIsGenerated="true">
-      <option name="arquillianRunConfiguration">
-        <value>
-          <option name="containerStateName" value="" />
-        </value>
-      </option>
-      <option name="TEST_OBJECT" value="class" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
+    <list>
+      <item itemvalue="Application.ScoreDoc" />
+      <item itemvalue="Application.Test" />
+      <item itemvalue="Application.LuceneSpeedTest (1)" />
+      <item itemvalue="Application.LuceneSpeedTest" />
+    </list>
     <recent_temporary>
       <list>
         <item itemvalue="Application.LuceneSpeedTest (1)" />
+        <item itemvalue="Application.ScoreDoc" />
         <item itemvalue="Application.Test" />
         <item itemvalue="Application.LuceneSpeedTest" />
       </list>
@@ -139,6 +161,7 @@
       <workItem from="1677187324730" duration="6654000" />
       <workItem from="1677236106897" duration="5880000" />
       <workItem from="1677249184169" duration="9627000" />
+      <workItem from="1677420671184" duration="1775000" />
     </task>
     <servers />
   </component>
@@ -155,7 +178,6 @@
         </entry>
       </map>
     </option>
-    <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -176,12 +198,6 @@
           <option name="timeStamp" value="76" />
         </line-breakpoint>
         <line-breakpoint type="java-line">
-          <condition expression="i == 12" language="JAVA" />
-          <url>file://$PROJECT_DIR$/src/main/java/org/apache/lucene/mytest/LuceneSpeedTest.java</url>
-          <line>49</line>
-          <option name="timeStamp" value="83" />
-        </line-breakpoint>
-        <line-breakpoint type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/org/apache/lucene/search/IndexSearcher.java</url>
           <line>740</line>
           <option name="timeStamp" value="96" />
@@ -197,34 +213,39 @@
           <option name="timeStamp" value="101" />
         </line-breakpoint>
         <line-breakpoint type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/org/apache/lucene/search/IndexSearcher.java</url>
-          <line>499</line>
-          <option name="timeStamp" value="110" />
-        </line-breakpoint>
-        <line-breakpoint type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/Test.java</url>
           <line>29</line>
           <option name="timeStamp" value="111" />
         </line-breakpoint>
         <line-breakpoint type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/org/apache/lucene/search/IndexSearcher.java</url>
-          <line>701</line>
-          <option name="timeStamp" value="119" />
-        </line-breakpoint>
-        <line-breakpoint type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/org/apache/lucene/search/IndexSearcher.java</url>
           <line>749</line>
           <option name="timeStamp" value="122" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/org/apache/lucene/search/IndexSearcher.java</url>
-          <line>719</line>
-          <option name="timeStamp" value="127" />
         </line-breakpoint>
         <line-breakpoint type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/org/apache/lucene/search/TopScoreDocCollector.java</url>
           <line>94</line>
           <option name="timeStamp" value="128" />
+        </line-breakpoint>
+        <line-breakpoint type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/org/apache/lucene/mytest/LuceneSpeedTest.java</url>
+          <line>50</line>
+          <option name="timeStamp" value="129" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/org/apache/lucene/search/IndexSearcher.java</url>
+          <line>499</line>
+          <option name="timeStamp" value="131" />
+        </line-breakpoint>
+        <line-breakpoint type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/org/apache/lucene/search/TopScoreDocCollector.java</url>
+          <line>237</line>
+          <option name="timeStamp" value="134" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/org/apache/lucene/search/IndexSearcher.java</url>
+          <line>719</line>
+          <option name="timeStamp" value="136" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
@@ -235,19 +256,14 @@
     </pin-to-top-manager>
     <watches-manager>
       <configuration name="Application">
+        <watch expression="updated" language="JAVA" />
+        <watch expression="toBeUpdated" language="JAVA" />
         <watch expression="collectors" />
-        <watch expression="collectors.get(4)" />
-        <watch expression="collectors.get(1)" />
-        <watch expression="collectorManager" />
-        <watch expression="collectorManager" language="JAVA" />
-        <watch expression="collectedCollectors.get(0)" />
-        <watch expression="collectedCollectors.get(4)" />
-        <watch expression="collectedCollectors" />
       </configuration>
     </watches-manager>
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/core$LuceneSpeedTest__1_.ic" NAME="LuceneSpeedTest (1) Coverage Results" MODIFIED="1677168528603" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false">
+    <SUITE FILE_PATH="coverage/core$LuceneSpeedTest__1_.ic" NAME="LuceneSpeedTest (1) Coverage Results" MODIFIED="1677367850198" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false">
       <FILTER>org.apache.lucene.mytest.*</FILTER>
     </SUITE>
   </component>
