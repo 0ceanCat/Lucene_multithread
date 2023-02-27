@@ -70,6 +70,17 @@
     </key>
   </component>
   <component name="RunManager" selected="Application.LuceneSpeedTest (1)">
+    <configuration default="true" type="ArquillianJUnit" factoryName="" nameIsGenerated="true">
+      <option name="arquillianRunConfiguration">
+        <value>
+          <option name="containerStateName" value="" />
+        </value>
+      </option>
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="LuceneSpeedTest (1)" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="org.apache.lucene.mytest.LuceneSpeedTest" />
       <module name="core" />
@@ -103,17 +114,11 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration default="true" type="ArquillianJUnit" factoryName="" nameIsGenerated="true">
-      <option name="arquillianRunConfiguration">
-        <value>
-          <option name="containerStateName" value="" />
-        </value>
-      </option>
-      <option name="TEST_OBJECT" value="class" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
+    <list>
+      <item itemvalue="Application.Test" />
+      <item itemvalue="Application.LuceneSpeedTest (1)" />
+      <item itemvalue="Application.LuceneSpeedTest" />
+    </list>
     <recent_temporary>
       <list>
         <item itemvalue="Application.LuceneSpeedTest (1)" />
