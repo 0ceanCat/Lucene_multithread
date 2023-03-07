@@ -235,8 +235,7 @@ public class IndexSearcher {
 
     // Package private for testing
     IndexSearcher(IndexReaderContext context, Executor executor, SliceExecutor sliceExecutor) {
-        assert context.isTopLevel
-                : "IndexSearcher's ReaderContext must be topLevel for reader" + context.reader();
+        assert context.isTopLevel : "IndexSearcher's ReaderContext must be topLevel for reader" + context.reader();
         assert (sliceExecutor == null) == (executor == null);
 
         reader = context.reader();
@@ -339,14 +338,12 @@ public class IndexSearcher {
     /**
      * Static method to segregate LeafReaderContexts amongst multiple slices
      */
-    public static LeafSlice[] slices(
-            List<LeafReaderContext> leaves, int maxDocsPerSlice, int maxSegmentsPerSlice) {
+    public static LeafSlice[] slices(List<LeafReaderContext> leaves, int maxDocsPerSlice, int maxSegmentsPerSlice) {
         // Make a copy so we can sort:
         List<LeafReaderContext> sortedLeaves = new ArrayList<>(leaves);
 
         // Sort by maxDoc, descending:
-        Collections.sort(
-                sortedLeaves, Collections.reverseOrder(Comparator.comparingInt(l -> l.reader().maxDoc())));
+        Collections.sort(sortedLeaves, Collections.reverseOrder(Comparator.comparingInt(l -> l.reader().maxDoc())));
 
         final List<List<LeafReaderContext>> groupedLeaves = new ArrayList<>();
         long docSum = 0;
@@ -465,43 +462,32 @@ public class IndexSearcher {
     public TopDocs searchAfter(ScoreDoc after, Query query, int numHits) throws IOException {
         final int limit = Math.max(1, reader.maxDoc());
         if (after != null && after.doc >= limit) {
-            throw new IllegalArgumentException(
-                    "after.doc exceeds the number of documents in the reader: after.doc="
-                            + after.doc
-                            + " limit="
-                            + limit);
+            throw new IllegalArgumentException("after.doc exceeds the number of documents in the reader: after.doc=" + after.doc + " limit=" + limit);
         }
 
         final int cappedNumHits = Math.min(numHits, limit);
 
-        final CollectorManager<TopScoreDocCollector, TopDocs> manager =
-                new CollectorManager<TopScoreDocCollector, TopDocs>() {
+        final CollectorManager<TopScoreDocCollector, TopDocs> manager = new CollectorManager<TopScoreDocCollector, TopDocs>() {
 
-                    private final HitsThresholdChecker hitsThresholdChecker =
-                            (executor == null || leafSlices.length <= 1)
-                                    ? HitsThresholdChecker.create(Math.max(TOTAL_HITS_THRESHOLD, numHits))
-                                    : HitsThresholdChecker.createShared(Math.max(TOTAL_HITS_THRESHOLD, numHits));
+            private final HitsThresholdChecker hitsThresholdChecker = (executor == null || leafSlices.length <= 1) ? HitsThresholdChecker.create(Math.max(TOTAL_HITS_THRESHOLD, numHits)) : HitsThresholdChecker.createShared(Math.max(TOTAL_HITS_THRESHOLD, numHits));
 
-                    private final MaxScoreAccumulator minScoreAcc =
-                            (executor == null || leafSlices.length <= 1) ? null : new MaxScoreAccumulator();
+            private final MaxScoreAccumulator minScoreAcc = (executor == null || leafSlices.length <= 1) ? null : new MaxScoreAccumulator();
 
-                    @Override
-                    public TopScoreDocCollector newCollector() throws IOException {
-                        return TopScoreDocCollector.create(
-                                cappedNumHits, after, hitsThresholdChecker, minScoreAcc);
-                    }
+            @Override
+            public TopScoreDocCollector newCollector() throws IOException {
+                return TopScoreDocCollector.create(cappedNumHits, after, hitsThresholdChecker, minScoreAcc);
+            }
 
-                    @Override
-                    public TopDocs reduce(Collection<TopScoreDocCollector> collectors) throws IOException {
-                        final TopDocs[] topDocs = new TopDocs[collectors.size()];
-                        List<TopScoreDocCollector> l = (List<TopScoreDocCollector>) collectors;
-                        int i = 0;
-                        for (TopScoreDocCollector collector : collectors) {
-                            topDocs[i++] = collector.topDocs();
-                        }
-                        return TopDocs.merge(0, cappedNumHits, topDocs);
-                    }
-                };
+            @Override
+            public TopDocs reduce(Collection<TopScoreDocCollector> collectors) throws IOException {
+                final TopDocs[] topDocs = new TopDocs[collectors.size()];
+                int i = 0;
+                for (TopScoreDocCollector collector : collectors) {
+                    topDocs[i++] = collector.topDocs();
+                }
+                return TopDocs.merge(0, cappedNumHits, topDocs);
+            }
+        };
 
         return search(query, manager);
     }
@@ -553,8 +539,7 @@ public class IndexSearcher {
      * @throws TooManyClauses If a query would exceed {@link IndexSearcher#getMaxClauseCount()}
      *                        clauses.
      */
-    public TopFieldDocs search(Query query, int n, Sort sort, boolean doDocScores)
-            throws IOException {
+    public TopFieldDocs search(Query query, int n, Sort sort, boolean doDocScores) throws IOException {
         return searchAfter(null, query, n, sort, doDocScores);
     }
 
@@ -600,8 +585,7 @@ public class IndexSearcher {
      * @throws TooManyClauses If a query would exceed {@link IndexSearcher#getMaxClauseCount()}
      *                        clauses.
      */
-    public TopFieldDocs searchAfter(
-            ScoreDoc after, Query query, int numHits, Sort sort, boolean doDocScores) throws IOException {
+    public TopFieldDocs searchAfter(ScoreDoc after, Query query, int numHits, Sort sort, boolean doDocScores) throws IOException {
         if (after != null && !(after instanceof FieldDoc)) {
             // TODO: if we fix type safety of TopFieldDocs we can
             // remove this
@@ -610,47 +594,36 @@ public class IndexSearcher {
         return searchAfter((FieldDoc) after, query, numHits, sort, doDocScores);
     }
 
-    private TopFieldDocs searchAfter(
-            FieldDoc after, Query query, int numHits, Sort sort, boolean doDocScores) throws IOException {
+    private TopFieldDocs searchAfter(FieldDoc after, Query query, int numHits, Sort sort, boolean doDocScores) throws IOException {
         final int limit = Math.max(1, reader.maxDoc());
         if (after != null && after.doc >= limit) {
-            throw new IllegalArgumentException(
-                    "after.doc exceeds the number of documents in the reader: after.doc="
-                            + after.doc
-                            + " limit="
-                            + limit);
+            throw new IllegalArgumentException("after.doc exceeds the number of documents in the reader: after.doc=" + after.doc + " limit=" + limit);
         }
         final int cappedNumHits = Math.min(numHits, limit);
         final Sort rewrittenSort = sort.rewrite(this);
 
-        final CollectorManager<TopFieldCollector, TopFieldDocs> manager =
-                new CollectorManager<>() {
+        final CollectorManager<TopFieldCollector, TopFieldDocs> manager = new CollectorManager<>() {
 
-                    private final HitsThresholdChecker hitsThresholdChecker =
-                            (executor == null || leafSlices.length <= 1)
-                                    ? HitsThresholdChecker.create(Math.max(TOTAL_HITS_THRESHOLD, numHits))
-                                    : HitsThresholdChecker.createShared(Math.max(TOTAL_HITS_THRESHOLD, numHits));
+            private final HitsThresholdChecker hitsThresholdChecker = (executor == null || leafSlices.length <= 1) ? HitsThresholdChecker.create(Math.max(TOTAL_HITS_THRESHOLD, numHits)) : HitsThresholdChecker.createShared(Math.max(TOTAL_HITS_THRESHOLD, numHits));
 
-                    private final MaxScoreAccumulator minScoreAcc =
-                            (executor == null || leafSlices.length <= 1) ? null : new MaxScoreAccumulator();
+            private final MaxScoreAccumulator minScoreAcc = (executor == null || leafSlices.length <= 1) ? null : new MaxScoreAccumulator();
 
-                    @Override
-                    public TopFieldCollector newCollector() throws IOException {
-                        // TODO: don't pay the price for accurate hit counts by default
-                        return TopFieldCollector.create(
-                                rewrittenSort, cappedNumHits, after, hitsThresholdChecker, minScoreAcc);
-                    }
+            @Override
+            public TopFieldCollector newCollector() throws IOException {
+                // TODO: don't pay the price for accurate hit counts by default
+                return TopFieldCollector.create(rewrittenSort, cappedNumHits, after, hitsThresholdChecker, minScoreAcc);
+            }
 
-                    @Override
-                    public TopFieldDocs reduce(Collection<TopFieldCollector> collectors) throws IOException {
-                        final TopFieldDocs[] topDocs = new TopFieldDocs[collectors.size()];
-                        int i = 0;
-                        for (TopFieldCollector collector : collectors) {
-                            topDocs[i++] = collector.topDocs();
-                        }
-                        return TopDocs.merge(rewrittenSort, 0, cappedNumHits, topDocs);
-                    }
-                };
+            @Override
+            public TopFieldDocs reduce(Collection<TopFieldCollector> collectors) throws IOException {
+                final TopFieldDocs[] topDocs = new TopFieldDocs[collectors.size()];
+                int i = 0;
+                for (TopFieldCollector collector : collectors) {
+                    topDocs[i++] = collector.topDocs();
+                }
+                return TopDocs.merge(rewrittenSort, 0, cappedNumHits, topDocs);
+            }
+        };
 
         TopFieldDocs topDocs = search(query, manager);
         if (doDocScores) {
@@ -667,16 +640,14 @@ public class IndexSearcher {
      * @lucene.experimental
      * @see CollectorManager
      */
-    public <C extends Collector, T> T search(Query query, CollectorManager<C, T> collectorManager)
-            throws IOException {
+    public <C extends Collector, T> T search(Query query, CollectorManager<C, T> collectorManager) throws IOException {
         final C firstCollector = collectorManager.newCollector();
         query = rewrite(query, firstCollector.scoreMode().needsScores());
         final Weight weight = createWeight(query, firstCollector.scoreMode(), 1);
         return search(weight, collectorManager, firstCollector);
     }
 
-    private <C extends Collector, T> T search(
-            Weight weight, CollectorManager<C, T> collectorManager, C firstCollector) throws IOException {
+    private <C extends Collector, T> T search(Weight weight, CollectorManager<C, T> collectorManager, C firstCollector) throws IOException {
         if (executor == null || leafSlices.length <= 1) {
             search(leafContexts, weight, firstCollector);
             return collectorManager.reduce(Collections.singletonList(firstCollector));
@@ -688,20 +659,17 @@ public class IndexSearcher {
                 final C collector = collectorManager.newCollector();
                 collectors.add(collector);
                 if (scoreMode != collector.scoreMode()) {
-                    throw new IllegalStateException(
-                            "CollectorManager does not always produce collectors with the same score mode");
+                    throw new IllegalStateException("CollectorManager does not always produce collectors with the same score mode");
                 }
             }
             final List<FutureTask<C>> listTasks = new ArrayList<>();
             for (int i = 0; i < leafSlices.length; ++i) {
                 final LeafReaderContext[] leaves = leafSlices[i].leaves;
                 final C collector = collectors.get(i);
-                FutureTask<C> task =
-                        new FutureTask<>(
-                                () -> {
-                                    search(Arrays.asList(leaves), weight, collector);
-                                    return collector;
-                                });
+                FutureTask<C> task = new FutureTask<>(() -> {
+                    search(Arrays.asList(leaves), weight, collector);
+                    return collector;
+                });
 
                 listTasks.add(task);
             }
@@ -735,8 +703,7 @@ public class IndexSearcher {
      * @throws TooManyClauses If a query would exceed {@link IndexSearcher#getMaxClauseCount()}
      *                        clauses.
      */
-    protected void search(List<LeafReaderContext> leaves, Weight weight, Collector collector)
-            throws IOException {
+    protected void search(List<LeafReaderContext> leaves, Weight weight, Collector collector) throws IOException {
 
         collector.setWeight(weight);
 
@@ -748,9 +715,7 @@ public class IndexSearcher {
                 final LeafCollector leafCollector;
                 try {
                     leafCollector = collector.getLeafCollector(ctx);
-                } catch (
-                        @SuppressWarnings("unused")
-                                CollectionTerminatedException | IOException e) {
+                } catch (@SuppressWarnings("unused") CollectionTerminatedException | IOException e) {
                     // there is no doc of interest in this reader context
                     // continue with the following leaf
                     return;
@@ -763,20 +728,15 @@ public class IndexSearcher {
                         }
                         scorer.score(leafCollector, ctx.reader().getLiveDocs());
                     }
-                } catch (
-                        @SuppressWarnings("unused")
-                                CollectionTerminatedException e) {
+                } catch (@SuppressWarnings("unused") CollectionTerminatedException e) {
                     // collection was terminated prematurely
                     // continue with the following leaf
-                } catch (
-                        @SuppressWarnings("unused")
-                                TimeLimitingBulkScorer.TimeExceededException | IOException e) {
+                } catch (@SuppressWarnings("unused") TimeLimitingBulkScorer.TimeExceededException | IOException e) {
                     partialResult = true;
                 }
+
             });
-
         }
-
         SearchWorkers.awaitForTasks();
     }
 
@@ -788,9 +748,7 @@ public class IndexSearcher {
      */
     public Query rewrite(Query original) throws IOException {
         Query query = original;
-        for (Query rewrittenQuery = query.rewrite(reader);
-             rewrittenQuery != query;
-             rewrittenQuery = query.rewrite(reader)) {
+        for (Query rewrittenQuery = query.rewrite(reader); rewrittenQuery != query; rewrittenQuery = query.rewrite(reader)) {
             query = rewrittenQuery;
         }
         query.visit(getNumClausesCheckVisitor());
@@ -839,8 +797,7 @@ public class IndexSearcher {
             }
 
             @Override
-            public void consumeTermsMatching(
-                    Query query, String field, Supplier<ByteRunAutomaton> automaton) {
+            public void consumeTermsMatching(Query query, String field, Supplier<ByteRunAutomaton> automaton) {
                 if (numClauses > maxClauseCount) {
                     throw new TooManyNestedClauses();
                 }
@@ -933,13 +890,7 @@ public class IndexSearcher {
 
     @Override
     public String toString() {
-        return "IndexSearcher("
-                + reader
-                + "; executor="
-                + executor
-                + "; sliceExecutionControlPlane "
-                + sliceExecutor
-                + ")";
+        return "IndexSearcher(" + reader + "; executor=" + executor + "; sliceExecutionControlPlane " + sliceExecutor + ")";
     }
 
     /**
@@ -953,8 +904,7 @@ public class IndexSearcher {
      * @return A {@link TermStatistics} (never null).
      * @lucene.experimental
      */
-    public TermStatistics termStatistics(Term term, int docFreq, long totalTermFreq)
-            throws IOException {
+    public TermStatistics termStatistics(Term term, int docFreq, long totalTermFreq) throws IOException {
         // This constructor will throw an exception if docFreq <= 0.
         return new TermStatistics(term.bytes(), docFreq, totalTermFreq);
     }
@@ -1025,9 +975,7 @@ public class IndexSearcher {
      */
     public static class TooManyNestedClauses extends TooManyClauses {
         public TooManyNestedClauses() {
-            super(
-                    "Query contains too many nested clauses; maxClauseCount is set to "
-                            + IndexSearcher.getMaxClauseCount());
+            super("Query contains too many nested clauses; maxClauseCount is set to " + IndexSearcher.getMaxClauseCount());
         }
     }
 

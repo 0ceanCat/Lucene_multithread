@@ -32,7 +32,7 @@ public class LuceneSpeedTest {
         if (isearcher == null) {
             getIndexSearcher();
         }
-       //List<List<String>> doclists = new ArrayList<>();
+       List<List<String>> doclists = new ArrayList<>();
         long start = System.currentTimeMillis();
         try {
             BufferedReader br = new BufferedReader(new FileReader(filename));
