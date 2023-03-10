@@ -22,6 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.search.MaxScoreAccumulator.DocAndScore;
@@ -48,11 +49,11 @@ public abstract class TopScoreDocCollector extends TopDocsCollector<ScoreDoc> {
 
         protected ScorerLeafCollector(int docBase,
                                       float minCompetitiveScore,
-                                      HitQueue queue,
+                                      List<ScoreDoc> queue,
                                       TotalHits.Relation totalHitsRelation) {
             this.docBase = docBase;
             this.queue = queue;
-            this.pqTop = queue.updateTop();
+            this.pqTop = null;
             this.minCompetitiveScore = minCompetitiveScore;
             this.totalHitsRelation = totalHitsRelation;
         }
@@ -60,7 +61,7 @@ public abstract class TopScoreDocCollector extends TopDocsCollector<ScoreDoc> {
         protected Scorable scorer;
         protected int docBase;
         protected float minCompetitiveScore;
-        protected HitQueue queue;
+        protected List<ScoreDoc> queue;
         protected ScoreDoc pqTop;
         protected TotalHits.Relation totalHitsRelation;
 
@@ -77,10 +78,10 @@ public abstract class TopScoreDocCollector extends TopDocsCollector<ScoreDoc> {
             super(numHits, hitsThresholdChecker, minScoreAcc, false);
         }
 
-        private final List<HitQueue>  queues = new LinkedList<>();
+        private final List<List<ScoreDoc>>  queues = new LinkedList<>();
 
-        protected synchronized HitQueue getQueue(){
-            HitQueue e = new HitQueue(numHits, true);
+        protected synchronized List<ScoreDoc> getQueue(){
+            List<ScoreDoc> e = new ArrayList<>(numHits);
             queues.add(e);
             return e;
         }
@@ -122,20 +123,30 @@ public abstract class TopScoreDocCollector extends TopDocsCollector<ScoreDoc> {
             // Note that this loop will usually not be executed, since the common usage
             // should be that the caller asks for the last howMany results. However it's
             // needed here for completeness.
-            HitQueue smaller = queues.get(0);
+            /*HitQueue smaller = queues.get(0);
             for (int i = numHits * queues.size() - start - howMany; i > 0; i--) {
                 smaller = getSmallest(smaller);
                 smaller.pop();
+            }*/
+            List<ScoreDoc> l = new ArrayList<>(numHits * queues.size());
+            for (int i = 0; i < queues.size(); i++) {
+                l.addAll(queues.get(0));
             }
-
+            List<ScoreDoc> collect = l.parallelStream().sorted((x, y)->{
+                if (x.score == y.score) {
+                    return Integer.compare(x.doc, y.doc);
+                } else {
+                    return -Float.compare(x.score, y.score);
+                }
+            }).limit(100).collect(Collectors.toList());
             // Get the requested results from pq.
-            populateResults(results, howMany);
+            //populateResults(results, howMany);
 
-            return newTopDocs(results, start);
+            return newTopDocs2(collect, start);
         }
 
         private HitQueue getSmallest(HitQueue smaller) {
-            Iterator<HitQueue> iterator = queues.iterator();
+            /*Iterator<HitQueue> iterator = queues.iterator();
             while (iterator.hasNext()) {
                 HitQueue queue = iterator.next();
                 if (smaller.size() == 0){
@@ -151,15 +162,16 @@ public abstract class TopScoreDocCollector extends TopDocsCollector<ScoreDoc> {
                     smaller = queue;
                 }
             }
-            return smaller;
+            return smaller;*/
+            return null;
         }
 
         protected synchronized void populateResults(ScoreDoc[] results, int howMany) {
-            HitQueue smaller = queues.get(0);
+            /*HitQueue smaller = queues.get(0);
             for (int i = howMany - 1; i >= 0; i--) {
                 smaller = getSmallest(smaller);
                 results[i] = smaller.pop();
-            }
+            }*/
         }
 
         @Override
@@ -186,6 +198,7 @@ public abstract class TopScoreDocCollector extends TopDocsCollector<ScoreDoc> {
 
                     int hits = totalHits.incrementAndGet();
                     hitsThresholdChecker.incrementHitCount();
+                    ScoreDoc pqTop = new ScoreDoc(Integer.MAX_VALUE, Float.NEGATIVE_INFINITY);
 
                     if (minScoreAcc != null && (hits & minScoreAcc.modInterval) == 0) {
                         updateGlobalMinCompetitiveScore(this);
@@ -204,7 +217,7 @@ public abstract class TopScoreDocCollector extends TopDocsCollector<ScoreDoc> {
                     }
                     pqTop.doc = doc + this.docBase;
                     pqTop.score = score;
-                    pqTop = queue.updateTop();
+                    queue.add(pqTop);
                     updateMinCompetitiveScore(this);
                 }
             };
@@ -433,7 +446,13 @@ public abstract class TopScoreDocCollector extends TopDocsCollector<ScoreDoc> {
 
         return new TopDocs(new TotalHits(totalHits.get(), totalHitsRelation), results);
     }
+    protected TopDocs newTopDocs2(List<ScoreDoc> results, int start) {
+        if (results == null) {
+            return EMPTY_TOPDOCS;
+        }
 
+        return new TopDocs(new TotalHits(totalHits.get(), totalHitsRelation), results);
+    }
     @Override
     public ScoreMode scoreMode() {
         return hitsThresholdChecker.scoreMode();

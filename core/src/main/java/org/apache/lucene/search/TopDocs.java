@@ -17,6 +17,8 @@
 package org.apache.lucene.search;
 
 import java.util.Comparator;
+import java.util.List;
+
 import org.apache.lucene.util.PriorityQueue;
 
 /** Represents hits returned by {@link IndexSearcher#search(Query,int)}. */
@@ -46,6 +48,11 @@ public class TopDocs {
     this.scoreDocs = scoreDocs;
   }
 
+  public TopDocs(TotalHits totalHits, List<ScoreDoc> scoreDocs) {
+    this.totalHits = totalHits;
+    this.scoreDocList = scoreDocs;
+  }
+  protected List<ScoreDoc> scoreDocList;
   // Refers to one hit:
   private static final class ShardRef {
     // Which shard (index into shardHits[]):
