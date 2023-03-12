@@ -29,7 +29,7 @@ public class SearchWorkers {
         return Thread.currentThread();
     }
 
-    static void execute(Runnable task) {
+    public static void execute(Runnable task) {
         Thread taskOwner = getTaskOwner();
         taskCounter.compute(taskOwner, countUp);
         pool.execute(() -> {
@@ -41,7 +41,7 @@ public class SearchWorkers {
         });
     }
 
-    static void awaitForTasks() {
+    public static void awaitForTasks() {
         Thread taskOwner = getTaskOwner();
         synchronized (taskOwner) {
             try {
@@ -55,7 +55,7 @@ public class SearchWorkers {
         }
     }
 
-    static <C> void submit(Callable<C> task) {
+    public static <C> void submit(Callable<C> task) {
         missions.compute(Thread.currentThread(), (k, v) -> {
             if (v == null) v = new ArrayList<>();
             v.add(pool.submit(task));
@@ -63,7 +63,7 @@ public class SearchWorkers {
         });
     }
 
-    static <C> List<C> awaitForTasksResult() {
+    public static <C> List<C> awaitForTasksResult() {
         Thread taskOwner = getTaskOwner();
         List<C> result = new ArrayList<>();
         for (Future future : missions.get(taskOwner)) {

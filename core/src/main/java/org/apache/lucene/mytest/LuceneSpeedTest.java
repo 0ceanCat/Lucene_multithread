@@ -32,16 +32,16 @@ public class LuceneSpeedTest {
         if (isearcher == null) {
             getIndexSearcher();
         }
-       //List<List<String>> doclists = new ArrayList<>();
+        List<List<String>> doclists = new ArrayList<>();
         long start = System.currentTimeMillis();
         try {
             BufferedReader br = new BufferedReader(new FileReader(filename));
             String line = br.readLine();
             int i = 0;
-            while (true){
+            while (true) {
                 i++;
                 if (line == null) break;
-                //List<String> doclist = new ArrayList<>();
+                List<String> doclist = new ArrayList<>();
                 BooleanQuery.Builder builder = new BooleanQuery.Builder();
                 for (String s : line.split(" ")) {
                     builder.add(new TermQuery(new Term("review_body", s)), BooleanClause.Occur.SHOULD)
@@ -49,25 +49,25 @@ public class LuceneSpeedTest {
                 }
                 TopDocs docs = isearcher.search(builder.build(), 1000);
                 ScoreDoc[] scoreDocs = docs.scoreDocs;
-                ScoreDoc d = null;
-                try{
-                    for (ScoreDoc scoreDoc : scoreDocs) {
-                        d = scoreDoc;
-                        int doc = scoreDoc.doc;
-                        Document doc1 = isearcher.doc(doc);
-                        //doclist.add(doc1.get("review_body"));
+                try {
+                    for (int i1 = 0; i1 < scoreDocs.length; i1++) {
+                        Document docs1 = isearcher.doc(scoreDocs[i1].doc);
                     }
-                }catch (Exception e){
+
+                   /* for (Document document : docs1) {
+                        doclist.add(document.get("review_body"));
+                    }*/
+                } catch (Exception e) {
                     e.printStackTrace();
                     System.out.println("error " + i);
                     return null;
                 }
                 //doclists.add(doclist);
                 line = br.readLine();
-            };
+            }
 
 
-           /* FileWriter fw = new FileWriter("results.txt");
+            /*FileWriter fw = new FileWriter("results.txt");
             for (List<String> doclist : doclists) {
                 fw.write(doclist.toString());
                 fw.write("\n");
@@ -113,7 +113,7 @@ public class LuceneSpeedTest {
         BufferedReader br = new BufferedReader(new FileReader(filename));
         br.readLine();
         getIndexWriter();
-        while (true){
+        while (true) {
             String line = br.readLine();
             if (line == null) break;
             String[] content = line.split("\t");
@@ -125,6 +125,7 @@ public class LuceneSpeedTest {
         }
         indexWriter.commit();
     }
+
     public static void main(String[] args) throws IOException {
         long s = System.currentTimeMillis();
         //String file = "D:\\Universidade\\tese\\lucene_test_dataset\\amazon_reviews_us_Digital_Music_Purchase_v1_00.tsv";
