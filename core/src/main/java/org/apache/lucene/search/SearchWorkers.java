@@ -4,35 +4,39 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiFunction;
 
 public class SearchWorkers {
-    final private static ThreadPoolExecutor pool = new ThreadPoolExecutor(3,
-                                            16,
-                                            60L,
-                                            TimeUnit.SECONDS,
-                                            new LinkedBlockingQueue<Runnable>());
+    final private static QueryExecutor[] executors = {new QueryExecutor(), new QueryExecutor()};
 
-    final private static Map<Object, Integer> taskCounter = new ConcurrentHashMap<>();
+    final private static Map<Thread, Integer> register = new ConcurrentHashMap<>();
+    final private static Map<Thread, Integer> taskCounter = new ConcurrentHashMap<>();
 
-    final private static Map<Object, List<Future>> missions = new ConcurrentHashMap<>();
+    final private static Map<Thread, List<Future>> missions = new ConcurrentHashMap<>();
 
-    final private static BiFunction<Object, Integer, Integer> countUp = (k, v) -> {
+    final private static AtomicInteger registCounter = new AtomicInteger(0);
+    final private static BiFunction<Thread, Integer, Integer> countUp = (k, v) -> {
         if (v == null)
             return 1;
         return v + 1;
     };
 
-    final private static BiFunction<Object, Integer, Integer> countDown = (k, v) -> v - 1;
+    final private static BiFunction<Thread, Integer, Integer> countDown = (k, v) -> v - 1;
+    final private static BiFunction<Thread, Integer, Integer> regist = (k, v) -> {
+        if (v == null) return registCounter.incrementAndGet() % executors.length;
+        return v;
+    };
 
-    private static Thread getTaskOwner(){
+    private static Thread getTaskOwner() {
         return Thread.currentThread();
     }
 
     static void execute(Runnable task) {
         Thread taskOwner = getTaskOwner();
         taskCounter.compute(taskOwner, countUp);
-        pool.execute(() -> {
+        Integer indx = register.compute(taskOwner, regist);
+        executors[indx].pool.execute(() -> {
             task.run();
             taskCounter.compute(taskOwner, countDown);
             synchronized (taskOwner) {
@@ -52,13 +56,16 @@ public class SearchWorkers {
                 e.printStackTrace();
             }
             taskCounter.remove(taskOwner);
+            register.remove(taskOwner);
         }
     }
 
     static <C> void submit(Callable<C> task) {
-        missions.compute(Thread.currentThread(), (k, v) -> {
+        Thread taskOwner = getTaskOwner();
+        Integer indx = register.compute(taskOwner, regist);
+        missions.compute(taskOwner, (k, v) -> {
             if (v == null) v = new ArrayList<>();
-            v.add(pool.submit(task));
+            v.add(executors[indx].pool.submit(task));
             return v;
         });
     }
@@ -74,6 +81,11 @@ public class SearchWorkers {
             }
         }
         missions.remove(taskOwner);
+        register.remove(taskOwner);
         return result;
+    }
+
+    private static class QueryExecutor {
+        final ThreadPoolExecutor pool = (ThreadPoolExecutor) Executors.newFixedThreadPool(2);
     }
 }

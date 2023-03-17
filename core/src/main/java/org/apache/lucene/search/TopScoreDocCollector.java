@@ -75,14 +75,16 @@ public abstract class TopScoreDocCollector extends TopDocsCollector<ScoreDoc> {
         SimpleTopScoreDocCollector(
                 int numHits, HitsThresholdChecker hitsThresholdChecker, MaxScoreAccumulator minScoreAcc) {
             super(numHits, hitsThresholdChecker, minScoreAcc, false);
+            queues = new ArrayList<>(2);
+            queues.add(new HitQueue(numHits, true));
+            queues.add(new HitQueue(numHits, true));
         }
 
-        private final List<HitQueue>  queues = new LinkedList<>();
+        private final List<HitQueue> queues;
+        private final AtomicInteger counter = new AtomicInteger(0);
 
-        protected synchronized HitQueue getQueue(){
-            HitQueue e = new HitQueue(numHits, true);
-            queues.add(e);
-            return e;
+        protected HitQueue getQueue() {
+            return queues.get(counter.incrementAndGet() % queues.size());
         }
 
         protected int topDocsSize() {
@@ -135,19 +137,16 @@ public abstract class TopScoreDocCollector extends TopDocsCollector<ScoreDoc> {
         }
 
         private HitQueue getSmallest(HitQueue smaller) {
-            Iterator<HitQueue> iterator = queues.iterator();
-            while (iterator.hasNext()) {
-                HitQueue queue = iterator.next();
-                if (smaller.size() == 0){
+            for (HitQueue queue : queues) {
+                if (smaller.size() == 0) {
                     smaller = queue;
                     continue;
                 }
-                if (queue.size() == 0){
-                    iterator.remove();
+                if (queue.size() == 0) {
                     continue;
                 }
 
-                if (queue.top().compareTo(smaller.top()) < 0){
+                if (queue.top().compareTo(smaller.top()) < 0) {
                     smaller = queue;
                 }
             }
