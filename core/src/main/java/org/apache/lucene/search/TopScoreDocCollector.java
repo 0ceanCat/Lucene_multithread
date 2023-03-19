@@ -79,7 +79,7 @@ public abstract class TopScoreDocCollector extends TopDocsCollector<ScoreDoc> {
             // reset the minimum competitive score
             //docBase = context.docBase;
             //minCompetitiveScore = 0f;
-            return new ScorerLeafCollector(context.docBase, 0f, updateTop(supplier), totalHitsRelation) {
+            return new ScorerLeafCollector(context.docBase, 0f, null, totalHitsRelation) {
                 @Override
                 public void setScorer(Scorable scorer) throws IOException {
                     super.setScorer(scorer);
@@ -92,6 +92,7 @@ public abstract class TopScoreDocCollector extends TopDocsCollector<ScoreDoc> {
 
                 @Override
                 public void collect(int doc) throws IOException {
+                    pqTop = updateTop(supplier);
                     float score = scorer.score();
 
                     // This collector relies on the fact that scorers produce positive values:
@@ -113,12 +114,12 @@ public abstract class TopScoreDocCollector extends TopDocsCollector<ScoreDoc> {
                         // Since docs are returned in-order (i.e., increasing doc Id), a document
                         // with equal score to pqTop.score cannot compete since HitQueue favors
                         // documents with lower doc Ids. Therefore reject those docs too.
+                        add(pqTop);
                         return;
                     }
                     pqTop.doc = doc + this.docBase;
                     pqTop.score = score;
                     add(pqTop);
-                    pqTop = updateTop(supplier);
                     updateMinCompetitiveScore(this);
                 }
             };

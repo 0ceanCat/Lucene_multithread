@@ -50,19 +50,15 @@ public class LuceneSpeedTest {
                 TopDocs docs = isearcher.search(builder.build(), 1000);
                 ScoreDoc[] scoreDocs = docs.scoreDocs;
                 try {
-                    for (int i1 = 0; i1 < scoreDocs.length; i1++) {
-                        Document docs1 = isearcher.doc(scoreDocs[i1].doc);
-                    }
-
-                   /* for (Document document : docs1) {
-                        doclist.add(document.get("review_body"));
+                    /*for (ScoreDoc scoreDoc : scoreDocs) {
+                        doclist.add(isearcher.doc(scoreDoc.doc).get("review_body"));
                     }*/
                 } catch (Exception e) {
                     e.printStackTrace();
                     System.out.println("error " + i);
                     return null;
                 }
-                //doclists.add(doclist);
+                doclists.add(doclist);
                 line = br.readLine();
             }
 

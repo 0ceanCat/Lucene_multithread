@@ -5,7 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="4c0428de-0d8d-44fc-a1d2-f077eb328d8b" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/apache/lucene/search/TopDocsCollector.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/apache/lucene/search/TopDocsCollector.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/results.txt" beforeDir="false" afterPath="$PROJECT_DIR$/results.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/apache/lucene/mytest/LuceneSpeedTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/apache/lucene/mytest/LuceneSpeedTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/apache/lucene/search/SearchWorkers.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/apache/lucene/search/SearchWorkers.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/apache/lucene/search/TopScoreDocCollector.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/apache/lucene/search/TopScoreDocCollector.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -43,22 +46,22 @@
       <filtered-out-file-type name="COMMIT_BY_MESSAGE" />
     </file-type-list>
   </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
   <component name="ProjectId" id="2M8tBSlItCqnl3Dx1gW3V3H94yy" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">
-    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
-    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
-    <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="aspect.path.notification.shown" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/src/main" />
-    <property name="project.structure.last.edited" value="Project" />
-    <property name="project.structure.proportion" value="0.15" />
-    <property name="project.structure.side.proportion" value="0.0" />
-  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "WebServerToolWindowFactoryState": "false",
+    "dart.analysis.tool.window.visible": "false",
+    "show.migrate.to.gradle.popup": "false"
+  }
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="D:\Universidade\tese\Lucene_multithread\core\src\main" />
@@ -144,6 +147,7 @@
       <workItem from="1677187324730" duration="6654000" />
       <workItem from="1677236106897" duration="5880000" />
       <workItem from="1677249184169" duration="9627000" />
+      <workItem from="1679222113698" duration="1395000" />
     </task>
     <servers />
   </component>
@@ -160,7 +164,6 @@
         </entry>
       </map>
     </option>
-    <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -226,33 +229,28 @@
           <line>719</line>
           <option name="timeStamp" value="127" />
         </line-breakpoint>
-        <line-breakpoint type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/org/apache/lucene/search/TopScoreDocCollector.java</url>
-          <line>94</line>
-          <option name="timeStamp" value="128" />
-        </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
     <pin-to-top-manager>
       <pinned-members>
+        <PinnedItemInfo parentTag="org.apache.lucene.search.HitQueue" memberName="heap" />
         <PinnedItemInfo parentTag="org.apache.lucene.search.TopScoreDocCollector$SimpleTopScoreDocCollector" memberName="totalHits" />
+        <PinnedItemInfo parentTag="org.apache.lucene.search.TopScoreDocCollector$SimpleTopScoreDocCollector" memberName="queues" />
       </pinned-members>
     </pin-to-top-manager>
     <watches-manager>
       <configuration name="Application">
+        <watch expression="updated" language="JAVA" />
+        <watch expression="toBeUpdated" language="JAVA" />
         <watch expression="collectors" />
-        <watch expression="collectors.get(4)" />
-        <watch expression="collectors.get(1)" />
-        <watch expression="collectorManager" />
-        <watch expression="collectorManager" language="JAVA" />
-        <watch expression="collectedCollectors.get(0)" />
-        <watch expression="collectedCollectors.get(4)" />
-        <watch expression="collectedCollectors" />
+        <watch expression="topDocs" />
+        <watch expression="queues" language="JAVA" />
+        <watch expression="((java.util.ArrayList)collectors).get(5)" language="JAVA" custom="java.util.ArrayList" />
       </configuration>
     </watches-manager>
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/core$LuceneSpeedTest__1_.ic" NAME="LuceneSpeedTest (1) Coverage Results" MODIFIED="1677168528603" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false">
+    <SUITE FILE_PATH="coverage/core$LuceneSpeedTest__1_.ic" NAME="LuceneSpeedTest (1) Coverage Results" MODIFIED="1677367850198" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false">
       <FILTER>org.apache.lucene.mytest.*</FILTER>
     </SUITE>
   </component>
