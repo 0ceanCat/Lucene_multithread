@@ -94,13 +94,10 @@ public abstract class TopScoreDocCollector extends TopDocsCollector<ScoreDoc> {
                     swap();
                 }
 
-                if (updated.size() == 0 || updated.top().compareTo(toBeUpdated.top()) >= 0){
-                    return toBeUpdated.pop();
-                }
+                return toBeUpdated.pop();
             }finally {
                 toBeUpdatedLock.unlock();
             }
-            return popUpdated();
         }
         protected void add(ScoreDoc t) {
             try{
@@ -132,11 +129,19 @@ public abstract class TopScoreDocCollector extends TopDocsCollector<ScoreDoc> {
             }
         }
 
-        synchronized void swap(){
-            if (toBeUpdated.size() > updated.size()) return;
-            PriorityQueue<ScoreDoc> temp = toBeUpdated;
-            toBeUpdated = updated;
-            updated = temp;
+        void swap(){
+            try{
+                toBeUpdatedLock.lock();
+                updatedLock.lock();
+                if (toBeUpdated.size() > updated.size()) return;
+                PriorityQueue<ScoreDoc> temp = toBeUpdated;
+                toBeUpdated = updated;
+                updated = temp;
+            }finally {
+                updatedLock.unlock();
+                toBeUpdatedLock.unlock();
+            }
+
         }
 
         protected int topDocsSize() {

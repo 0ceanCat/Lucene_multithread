@@ -7,7 +7,8 @@
     <list default="true" id="4c0428de-0d8d-44fc-a1d2-f077eb328d8b" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/results.txt" beforeDir="false" afterPath="$PROJECT_DIR$/results.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/apache/lucene/search/ScoreDoc.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/apache/lucene/search/ScoreDoc.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/apache/lucene/mytest/LuceneSpeedTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/apache/lucene/mytest/LuceneSpeedTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/apache/lucene/search/SearchWorkers.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/apache/lucene/search/SearchWorkers.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/apache/lucene/search/TopScoreDocCollector.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/apache/lucene/search/TopScoreDocCollector.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -54,11 +55,12 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "WebServerToolWindowFactoryState": "false",
+    "dart.analysis.tool.window.visible": "false"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="D:\Universidade\tese\Lucene_multithread\core\src\main" />
@@ -223,24 +225,21 @@
         <line-breakpoint type="java-line">
           <condition expression="pqTop.doc == 326201" language="JAVA" />
           <url>file://$PROJECT_DIR$/src/main/java/org/apache/lucene/search/TopScoreDocCollector.java</url>
-          <line>259</line>
+          <line>264</line>
           <option name="timeStamp" value="148" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/org/apache/lucene/search/IndexSearcher.java</url>
-          <line>501</line>
-          <option name="timeStamp" value="166" />
         </line-breakpoint>
         <line-breakpoint type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/org/apache/lucene/search/TopScoreDocCollector.java</url>
-          <line>233</line>
+          <line>238</line>
           <option name="timeStamp" value="169" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
     <pin-to-top-manager>
       <pinned-members>
+        <PinnedItemInfo parentTag="org.apache.lucene.search.HitQueue" memberName="heap" />
         <PinnedItemInfo parentTag="org.apache.lucene.search.TopScoreDocCollector$SimpleTopScoreDocCollector" memberName="totalHits" />
+        <PinnedItemInfo parentTag="org.apache.lucene.search.TopScoreDocCollector$SimpleTopScoreDocCollector" memberName="queues" />
       </pinned-members>
     </pin-to-top-manager>
     <watches-manager>
