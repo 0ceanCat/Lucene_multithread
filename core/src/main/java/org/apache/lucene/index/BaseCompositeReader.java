@@ -159,15 +159,18 @@ public abstract class BaseCompositeReader<R extends IndexReader> extends Composi
         subReaders[index].document(docID - starts[index], visitor); // dispatch to subreader
     }
 
+
     @Override
-    public final Map<Integer, List<Integer>> getIndexes(int[] docIds) {
+    public final Map<Integer, List<Pair>> getIndexes(int[] docIds) {
         ensureOpen();
-        Map<Integer, List<Integer>> map = new HashMap<>();
-        for (int docId : docIds) {
-            int i = readerIndex(docId);
-            map.compute(i, (k, v)->{
+        Map<Integer, List<Pair>> map = new HashMap<>();
+        for (int i = 0; i < docIds.length; i++) {
+            int docId = docIds[i];
+            int index = readerIndex(docId);
+            int finalI = i;
+            map.compute(index, (k, v)->{
                 if (v == null) v = new ArrayList<>();
-                v.add(docId);
+                v.add(new Pair(finalI, docId));
                 return v;
             });
         }

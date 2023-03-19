@@ -386,16 +386,16 @@ public abstract class IndexReader implements Closeable {
         return visitor.getDocument();
     }
 
-    public final List<Document> documents(int... docIDs) throws IOException {
-        List<Document> l = new CopyOnWriteArrayList<>();
-        Map<Integer, List<Integer>> indexes = getIndexes(docIDs);
-        indexes.forEach((index, list)->{
-            SearchWorkers.execute(()->{
-                for (Integer id : list) {
+    public final Document[] documents(int... docIDs) throws IOException {
+        Document[] docs = new Document[docIDs.length];
+        Map<Integer, List<Pair>> indexes = getIndexes(docIDs);
+        indexes.forEach((index, list) -> {
+            SearchWorkers.execute(() -> {
+                for (Pair pair : list) {
                     final DocumentStoredFieldVisitor visitor = new DocumentStoredFieldVisitor();
                     try {
-                        document(index, id, visitor);
-                        l.add(visitor.getDocument());
+                        document(index, pair.doc, visitor);
+                        docs[pair.offset] = visitor.getDocument();
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
@@ -403,7 +403,7 @@ public abstract class IndexReader implements Closeable {
             });
         });
         SearchWorkers.awaitForTasks();
-        return l;
+        return docs;
     }
 
     /**
@@ -416,7 +416,10 @@ public abstract class IndexReader implements Closeable {
         return visitor.getDocument();
     }
 
-    public void document(int index, int docID, StoredFieldVisitor visitor) throws IOException{};
+    public void document(int index, int docID, StoredFieldVisitor visitor) throws IOException {
+    }
+
+    ;
 
     /**
      * Returns true if any documents have been deleted. Implementers should consider overriding this
@@ -525,5 +528,13 @@ public abstract class IndexReader implements Closeable {
      */
     public abstract long getSumTotalTermFreq(String field) throws IOException;
 
-    public Map<Integer, List<Integer>> getIndexes(int[] ids) { return null;};
+    public record Pair(int offset, int doc) {
+
+    }
+
+    public Map<Integer, List<Pair>> getIndexes(int[] ids) {
+        return null;
+    }
+
+    ;
 }

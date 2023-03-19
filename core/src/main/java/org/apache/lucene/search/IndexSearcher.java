@@ -399,7 +399,7 @@ public class IndexSearcher {
         return reader.document(docID);
     }
 
-    public List<Document> docs(int... docIDs) throws IOException {
+    public Document[] docs(int... docIDs) throws IOException {
         return reader.documents(docIDs);
     }
 

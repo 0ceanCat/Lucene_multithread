@@ -47,12 +47,20 @@ public class LuceneSpeedTest {
                     builder.add(new TermQuery(new Term("review_body", s)), BooleanClause.Occur.SHOULD)
                             .build();
                 }
-                TopDocs docs = isearcher.search(builder.build(), 1000);
+                TopDocs docs = isearcher.search(builder.build(), 10);
                 ScoreDoc[] scoreDocs = docs.scoreDocs;
                 try {
                     /*for (ScoreDoc scoreDoc : scoreDocs) {
                         doclist.add(isearcher.doc(scoreDoc.doc).get("review_body"));
                     }*/
+                    int[] ids = new int[scoreDocs.length];
+                    for (int j = 0; j < scoreDocs.length; j++) {
+                        ids[j] = scoreDocs[j].doc;
+                    }
+                    Document[] docs1 = isearcher.docs(ids);
+                    for (Document indexableFields : docs1) {
+                        doclist.add(indexableFields.get("review_body"));
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                     System.out.println("error " + i);
@@ -63,12 +71,12 @@ public class LuceneSpeedTest {
             }
 
 
-            /*FileWriter fw = new FileWriter("results.txt");
+            FileWriter fw = new FileWriter("results.txt");
             for (List<String> doclist : doclists) {
                 fw.write(doclist.toString());
                 fw.write("\n");
             }
-            fw.close();*/
+            fw.close();
             System.out.println(System.currentTimeMillis() - start);
 
         } catch (IOException e) {
