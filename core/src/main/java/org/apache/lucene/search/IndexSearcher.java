@@ -683,7 +683,7 @@ public class IndexSearcher {
     private <C extends Collector, T> T search(
             Weight weight, CollectorManager<C, T> collectorManager, C firstCollector) throws IOException {
         if (executor == null || leafSlices.length <= 1) {
-            search(leafContexts, weight, firstCollector);
+            parallelSearch(leafContexts, weight, firstCollector);
             return collectorManager.reduce(Collections.singletonList(firstCollector));
         } else {
             final List<C> collectors = new ArrayList<>(leafSlices.length);
@@ -704,7 +704,7 @@ public class IndexSearcher {
                 FutureTask<C> task =
                         new FutureTask<>(
                                 () -> {
-                                    search(Arrays.asList(leaves), weight, collector);
+                                    parallelSearch(Arrays.asList(leaves), weight, collector);
                                     return collector;
                                 });
 
@@ -749,13 +749,52 @@ public class IndexSearcher {
         // threaded...? the Collector could be sync'd?
         // always use single thread:
         for (LeafReaderContext ctx : leaves) { // search each subreader
+            final LeafCollector leafCollector;
+            try {
+                leafCollector = collector.getLeafCollector(ctx);
+            } catch (
+                    @SuppressWarnings("unused")
+                            CollectionTerminatedException | IOException e) {
+                // there is no doc of interest in this reader context
+                // continue with the following leaf
+                return;
+            }
+            try {
+                BulkScorer scorer = weight.bulkScorer(ctx);
+                if (scorer != null) {
+                    if (queryTimeout != null && queryTimeout.isTimeoutEnabled()) {
+                        scorer = new TimeLimitingBulkScorer(scorer, queryTimeout);
+                    }
+                    scorer.score(leafCollector, ctx.reader().getLiveDocs());
+                }
+            } catch (
+                    @SuppressWarnings("unused")
+                            CollectionTerminatedException e) {
+                // collection was terminated prematurely
+                // continue with the following leaf
+            } catch (
+                    @SuppressWarnings("unused")
+                            TimeLimitingBulkScorer.TimeExceededException | IOException e) {
+                partialResult = true;
+            }
+        }
+    }
+
+    public void parallelSearch(Weight weight, Collector collector)
+            throws IOException {
+        collector.setWeight(weight);
+
+        // TODO: should we make this
+        // threaded...? the Collector could be sync'd?
+        // always use single thread:
+        for (LeafReaderContext ctx : leafContexts) { // search each subreader
             SearchWorkers.execute(() -> {
                 final LeafCollector leafCollector;
                 try {
                     leafCollector = collector.getLeafCollector(ctx);
                 } catch (
                         @SuppressWarnings("unused")
-                                CollectionTerminatedException | IOException e) {
+                        CollectionTerminatedException | IOException e) {
                     // there is no doc of interest in this reader context
                     // continue with the following leaf
                     return;
@@ -770,12 +809,56 @@ public class IndexSearcher {
                     }
                 } catch (
                         @SuppressWarnings("unused")
-                                CollectionTerminatedException e) {
+                        CollectionTerminatedException e) {
                     // collection was terminated prematurely
                     // continue with the following leaf
                 } catch (
                         @SuppressWarnings("unused")
-                                TimeLimitingBulkScorer.TimeExceededException | IOException e) {
+                        TimeLimitingBulkScorer.TimeExceededException | IOException e) {
+                    partialResult = true;
+                }
+            });
+
+        }
+
+        SearchWorkers.awaitForTasks();
+    }
+    protected void parallelSearch(List<LeafReaderContext> leaves, Weight weight, Collector collector)
+            throws IOException {
+
+        collector.setWeight(weight);
+
+        // TODO: should we make this
+        // threaded...? the Collector could be sync'd?
+        // always use single thread:
+        for (LeafReaderContext ctx : leaves) { // search each subreader
+            SearchWorkers.execute(() -> {
+                final LeafCollector leafCollector;
+                try {
+                    leafCollector = collector.getLeafCollector(ctx);
+                } catch (
+                        @SuppressWarnings("unused")
+                        CollectionTerminatedException | IOException e) {
+                    // there is no doc of interest in this reader context
+                    // continue with the following leaf
+                    return;
+                }
+                try {
+                    BulkScorer scorer = weight.bulkScorer(ctx);
+                    if (scorer != null) {
+                        if (queryTimeout != null && queryTimeout.isTimeoutEnabled()) {
+                            scorer = new TimeLimitingBulkScorer(scorer, queryTimeout);
+                        }
+                        scorer.score(leafCollector, ctx.reader().getLiveDocs());
+                    }
+                } catch (
+                        @SuppressWarnings("unused")
+                        CollectionTerminatedException e) {
+                    // collection was terminated prematurely
+                    // continue with the following leaf
+                } catch (
+                        @SuppressWarnings("unused")
+                        TimeLimitingBulkScorer.TimeExceededException | IOException e) {
                     partialResult = true;
                 }
             });
