@@ -5,14 +5,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="4c0428de-0d8d-44fc-a1d2-f077eb328d8b" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/core.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/core.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/../.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../README.md" beforeDir="false" afterPath="$PROJECT_DIR$/../README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/results.txt" beforeDir="false" afterPath="$PROJECT_DIR$/results.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/apache/lucene/index/BaseCompositeReader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/apache/lucene/index/BaseCompositeReader.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/results.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Test.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/apache/lucene/index/IndexReader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/apache/lucene/index/IndexReader.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/apache/lucene/mytest/LuceneSpeedTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/apache/lucene/mytest/LuceneSpeedTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/apache/lucene/search/TopDocsCollector.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/apache/lucene/search/TopDocsCollector.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/apache/lucene/mytest/LuceneSpeedTest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/apache/lucene/search/SearchWorkers.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/apache/lucene/search/SearchWorkers.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -58,17 +58,29 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "WebServerToolWindowFactoryState": "false",
-    "dart.analysis.tool.window.visible": "false",
-    "project.structure.last.edited": "Project",
-    "project.structure.proportion": "0.15",
-    "project.structure.side.proportion": "0.2",
-    "settings.editor.selected.configurable": "reference.projectsettings.compiler.javacompiler",
-    "show.migrate.to.gradle.popup": "false"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;dart.analysis.tool.window.visible&quot;: &quot;false&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/Java/Idea/Lucene_multithread&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;reference.projectsettings.compiler.javacompiler&quot;,
+    &quot;show.migrate.to.gradle.popup&quot;: &quot;false&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  },
+  &quot;keyToStringList&quot;: {
+    &quot;com.intellij.ide.scratch.ScratchImplUtil$2/New Scratch File&quot;: [
+      &quot;GitIgnore&quot;
+    ]
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="D:\Universidade\tese\Lucene_multithread\core\src\main" />
@@ -155,6 +167,8 @@
       <workItem from="1677236106897" duration="5880000" />
       <workItem from="1677249184169" duration="9627000" />
       <workItem from="1679222113698" duration="1395000" />
+      <workItem from="1690042447529" duration="345000" />
+      <workItem from="1690043671596" duration="44000" />
     </task>
     <servers />
   </component>
@@ -217,11 +231,6 @@
           <option name="timeStamp" value="110" />
         </line-breakpoint>
         <line-breakpoint type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/Test.java</url>
-          <line>29</line>
-          <option name="timeStamp" value="111" />
-        </line-breakpoint>
-        <line-breakpoint type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/org/apache/lucene/search/IndexSearcher.java</url>
           <line>701</line>
           <option name="timeStamp" value="119" />
@@ -235,11 +244,6 @@
           <url>file://$PROJECT_DIR$/src/main/java/org/apache/lucene/search/IndexSearcher.java</url>
           <line>719</line>
           <option name="timeStamp" value="127" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/org/apache/lucene/index/IndexReader.java</url>
-          <line>391</line>
-          <option name="timeStamp" value="178" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/org/apache/lucene/index/BaseCompositeReader.java</url>

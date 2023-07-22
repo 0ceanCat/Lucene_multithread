@@ -536,5 +536,4 @@ public abstract class IndexReader implements Closeable {
         return null;
     }
 
-    ;
 }

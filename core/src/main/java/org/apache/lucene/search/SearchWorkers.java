@@ -23,12 +23,8 @@ public class SearchWorkers {
     private static final Map<Object, QueryExecutor> register = new ConcurrentHashMap();
     private static final Map<Object, Integer> taskCounter = new ConcurrentHashMap();
     private static final Map<Object, List<Future>> missions = new ConcurrentHashMap();
-    private static final BiFunction<Object, Integer, Integer> countUp = (k, v) -> {
-        return v == null ? 1 : v + 1;
-    };
-    private static final BiFunction<Object, Integer, Integer> countDown = (k, v) -> {
-        return v - 1;
-    };
+    private static final BiFunction<Object, Integer, Integer> countUp = (k, v) -> v == null ? 1 : v + 1;
+    private static final BiFunction<Object, Integer, Integer> countDown = (k, v) -> v - 1;
     private static final AtomicInteger counter = new AtomicInteger(0);
 
     private SearchWorkers() {
